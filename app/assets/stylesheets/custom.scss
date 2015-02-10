@@ -1,4 +1,15 @@
 #sidebar{
   width: 20%;
   display: inline-block;
+  float: left;
+
+  .header{
+    margin-top: 0px;
+    text-align: center;
+  }
+}
+
+#main_view{
+  width: 79%;
+  display: inline-block;
 }
