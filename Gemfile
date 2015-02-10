@@ -6,6 +6,7 @@ gem 'rails', '4.2.0'
 # Use postgresql as the database for Active Record
 gem 'pg'
 gem 'rspec'
+gem 'databasedotcom'
 # Use SCSS for stylesheets
 gem 'momentjs-rails'
 gem 'fullcalendar-rails'
