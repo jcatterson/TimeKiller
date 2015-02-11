@@ -10,13 +10,7 @@
 <body>
 
 <div id="sidebar">
-	<div>
-		<h2 class="header">Welcome</h2>
-	</div>
-	<div>
-		Search
-
-	</div>
+  <%= render :partial=>'salesforce/index', locals: { sobjects: @salesforce.sobjects } %>
 </div>
 
 <div id="main_view">

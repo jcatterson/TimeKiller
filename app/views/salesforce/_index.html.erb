@@ -1,0 +1,12 @@
+<div>
+  <h2 class="header">Welcome</h2>
+</div>
+
+<div>
+  <span>Search</span>
+  <% sobjects.each do |obj| %>
+    <div>
+      <span><%= obj.to_s %></span>
+    </div>
+  <%end%>
+</div>
