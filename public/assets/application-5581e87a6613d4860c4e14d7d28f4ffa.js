@@ -11602,7 +11602,11 @@ return jQuery;
 
 }).call(this);
 (function() {
-
+  $(function() {
+    return $('#sobject_search').keydown(function(evt) {
+      return console.log(evt);
+    });
+  });
 
 }).call(this);
 //! moment.js
