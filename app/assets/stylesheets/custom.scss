@@ -2,6 +2,8 @@
   width: 20%;
   display: inline-block;
   float: left;
+  border-right: 2px solid black;
+  margin-right: 3%;
 
   .header{
     margin-top: 0px;
@@ -10,6 +12,6 @@
 }
 
 #main_view{
-  width: 79%;
+  width: 76%;
   display: inline-block;
 }
