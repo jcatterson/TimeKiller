@@ -4,7 +4,7 @@
 
 <div>
   <label for="sobject_search">Search</label>
-  <input type="text" id="sobject_search"/>
+  <input type="text" id="sobject_search" ng-model="sobject_search"/>
   <div id="sobject_list">
     <% sobjects.each do |obj| %>
       <div id="sobject_item">
@@ -12,4 +12,5 @@
       </div>
     <%end%>
   </div>
+  {{sobject_search}}
 </div>
