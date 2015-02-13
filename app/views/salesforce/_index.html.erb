@@ -6,11 +6,11 @@
   <label for="sobject_search">Search</label>
   <input type="text" id="sobject_search" ng-model="sobject_search"/>
   <div id="sobject_list">
-    <% sobjects.each do |obj| %>
+    <%# sobjects.each do |obj| %>
       <div id="sobject_item">
-        <span><%= obj.to_s %></span>
+        <span><%#= obj.to_s %></span>
       </div>
-    <%end%>
+    <%#end%>
   </div>
   {{sobject_search}}
 </div>

@@ -12,10 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require angular
+
 //= require turbolinks
-
-
+//= require angular
+//= require angular-resource
+//= require main
 //= require_tree .
 //= require moment
 //= require fullcalendar

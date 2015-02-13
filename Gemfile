@@ -8,6 +8,7 @@ gem 'pg'
 gem 'rspec'
 gem 'databasedotcom'
 # Use SCSS for stylesheets
+gem 'angularjs-rails'
 gem 'momentjs-rails'
 gem 'fullcalendar-rails'
 gem 'sass-rails', '~> 5.0'

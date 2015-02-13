@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="app">
 <head>
   <title>TimeKiller</title>
+
   <%= favicon_link_tag 'favicon.ico' %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
@@ -17,8 +18,8 @@
 	<%= yield %>
 </div>
 
-<div>
-	{{1+2}}
+<div ng-controller="SalesforceCtrl">
+	{{sobjects}}
 </div>
 
 </body>
