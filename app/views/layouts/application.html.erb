@@ -10,17 +10,13 @@
 </head>
 <body>
 
-<div id="sidebar">
-  <%= render :partial=>'salesforce/index', locals: { sobjects: @salesforce.sobjects } %>
-</div>
+  <div id="sidebar">
+    <span ng-view/>
+  </div>
 
-<div id="main_view">
-	<%= yield %>
-</div>
-
-<div ng-controller="SalesforceCtrl">
-	{{sobjects}}
-</div>
+  <div id="main_view">
+    <%= yield %>
+  </div>
 
 </body>
 </html>
