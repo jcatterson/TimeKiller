@@ -6,8 +6,7 @@ class Salesforce
     @databasedotcom.client_id = "3MVG9fMtCkV6eLhcHZKdKpiBaGRD.nn9APDZwScPrrS1WNk0n7FZxiid9uUSJil3fxRC_jFE1Fk_McVoXI9uu"
     @databasedotcom.client_secret = ENV["SF_CLIENT_SECRET"]
     @databasedotcom.authenticate :username=>ENV["SF_USERNAME"], :password=>ENV["SF_PASSWORD"]
-    byebug
-    @restforce = Restforce.new :oauth_token=>@databasedotcom.oauth_token, :instance_url=>@databasedotcom.instance_url
+    @restforce = Restforce.tooling :oauth_token=>@databasedotcom.oauth_token, :instance_url=>@databasedotcom.instance_url
   end
 
   def sobject_list
@@ -15,6 +14,9 @@ class Salesforce
   end
   
   def describe( sobject_name )
+    @restforce.get "/services/data/v#{SF_API_VERSION}/sobjects/#{sobject_name}/describe"
   end
 
+  private
+    SF_API_VERSION = "30.0"
 end
