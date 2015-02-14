@@ -10,14 +10,16 @@
 </head>
 <body>
 
-  <div id="sidebar">
-    <span ng-view/>
-    <div id="sidebar_footer"/>
-  </div>
+    <div id="sidebar">
+      <ng-include src="'templates/sobject_list.html'"></ng-include>
+      <div id="sidebar_footer"></div>
+    </div>
 
-  <div id="main_view">
-    <%= yield %>
-  </div>
+    <div id="main_view">
+      <%= yield %>
+    </div>
+
+    <!--<div ng-view></div>-->
 
 </body>
 </html>

@@ -14,6 +14,7 @@ body, html{
   float: left;
   border-right: 2px solid black;
   margin-right: 3%;
+  display: inline;
 
   .header{
     margin-top: 0px;
@@ -23,7 +24,7 @@ body, html{
 
 #main_view{
   width: 76%;
-  display: inline-block;
+  display: inline;
 }
 
 #sidebar_footer{
