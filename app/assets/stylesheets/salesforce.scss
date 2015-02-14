@@ -1,17 +1,35 @@
 // Place all the styles related to the salesforce controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+#sobject_search_list{
+  background-color: #495A99;
+  padding-top: 10px;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding-bottom: 10px;
+}
+
+#sobject_search_toolbar{
+  text-align: center;
+}
+
 #sobject_list{
-  margin-top: 15px;
+  margin-top: 7px;
   margin-left: 8px;
   margin-right: 8px;
 }
 
-#sobject_item{
+.sobject_item:hover{
+  background-color: #0F3AB2;
+}
+
+.sobject_item{
+  background-color: white;
   padding-top: 8px;
   padding-left: 20px;
   padding-bottom: 8px;
   border: 1px solid black;
+  cursor: pointer;
 }
 
 #sobject_search_list{
