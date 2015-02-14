@@ -11,6 +11,6 @@ class SalesforceController < ApplicationController
 
   private
     def login
-      @salesforce == nil ? Salesforce.new : @salesforce
+      @salesforce = @salesforce == nil ? Salesforce.new : @salesforce
     end
 end
