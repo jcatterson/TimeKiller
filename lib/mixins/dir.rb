@@ -10,9 +10,8 @@ class Dir
   end
 
   def self.rm_files_in_directory files, directory
-    files_to_rm = join_files_with_directory_for_path files, directory
-    if files_to_rm.size > 0
-      sh("rm #{files_to_rm}")
+    files.each do |file_to_rm|
+      File.delete "#{directory}/#{file_to_rm}"
     end
   end
   
