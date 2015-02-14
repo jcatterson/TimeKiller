@@ -12,11 +12,15 @@ class Salesforce
   def sobject_list
     @databasedotcom.list_sobjects
   end
-  
+
   def describe( sobject_name )
     @restforce.get "/services/data/v#{SF_API_VERSION}/sobjects/#{sobject_name}/describe"
   end
 
+  def workflow_rules( sobject_name )
+    @restforce.get "/services/data/v#{SF_API_VERSION}/tooling/query/?q=Select+id,name,fullname,metadata+from+WorkflowRule+where+TableEnumOrId=\'#{sobject_name}\'"
+  end
+
   private
-    SF_API_VERSION = "30.0"
+    SF_API_VERSION = "33.0"
 end
