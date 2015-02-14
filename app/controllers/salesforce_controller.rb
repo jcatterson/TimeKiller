@@ -11,10 +11,12 @@ class SalesforceController < ApplicationController
 
   def describe
     sobject = params["sobject"]
-    sobject = @salesforce.describe sobject
+    sobject_described = @salesforce.describe( sobject ).body
+    workflow_rules = @salesforce.workflow_rules sobject
+    sf_object = { "sobject"=>sobject_described, "workflowrules"=>workflow_rules}
     respond_to do |format|
       format.html
-      format.json { render json: sobject }
+      format.json { render json: sf_object }
     end
   end
 

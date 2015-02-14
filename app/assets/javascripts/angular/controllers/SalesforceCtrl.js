@@ -22,8 +22,8 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   $scope.describe_sobject = function(sobject_to_describe){
     if( !described_objects[sobject_to_describe] ){
       description = Describe.query({"sobject":sobject_to_describe}, function(res){
-        described_objects[sobject_to_describe] = res.body;
-        $scope.described_sobject = res.body;
+        described_objects[sobject_to_describe] = res;
+        $scope.described_sobject = res;
       });
     }
     else{
