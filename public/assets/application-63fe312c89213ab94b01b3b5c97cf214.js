@@ -39390,9 +39390,15 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   }
 
   sobject_is_like_search_term = function( sobject ){
+    window.sobject = $scope.sobject_search;
     return sobject.toUpperCase().indexOf( $scope.sobject_search.toUpperCase() ) >= 0;
   }
-}]);
+}])
+.directive('sobjectList', function(){
+  return{
+    templateUrl: '/templates/salesforce/sobject_list.html'
+  }
+});
 (function() {
   $(function() {
     var view;
