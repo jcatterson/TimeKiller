@@ -13,6 +13,7 @@ class SalesforceController < ApplicationController
     sobject = params["sobject"]
     sobject = @salesforce.describe sobject
     respond_to do |format|
+      format.html
       format.json { render json: sobject }
     end
   end

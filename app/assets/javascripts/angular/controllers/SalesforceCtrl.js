@@ -10,6 +10,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   var Salesforce = $resource( '/salesforce/sobject_list', {}, {query: query} );
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
   var original_sobject_list;
+  var described_objects = {}
   $scope.sobjects = Salesforce.query( function(result){
     original_sobject_list = _.clone( result );
   });
@@ -19,8 +20,15 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
-    description = Describe.query({"sobject":sobject_to_describe});
-    console.log( description );
+    if( !described_objects[sobject_to_describe] ){
+      description = Describe.query({"sobject":sobject_to_describe}, function(res){
+        described_objects[sobject_to_describe] = res.body;
+        $scope.described_sobject = res.body;
+      });
+    }
+    else{
+      $scope.described_sobject = described_objects[sobject_to_describe];
+    }
   }
 
   sobject_is_like_search_term = function( sobject ){

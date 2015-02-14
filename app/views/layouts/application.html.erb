@@ -1,25 +1,15 @@
 <!DOCTYPE html>
-<html ng-app="app">
+<html>
 <head>
   <title>TimeKiller</title>
-
   <%= favicon_link_tag 'favicon.ico' %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-    <div id="sidebar">
-      <ng-include src="'templates/sobject_list.html'"></ng-include>
-      <div id="sidebar_footer"></div>
-    </div>
-
-    <div id="main_view">
-      <%= yield %>
-    </div>
-
-    <!--<div ng-view></div>-->
-
+  <span ng-app="app">
+    <%= yield %>
+  </span>
 </body>
 </html>

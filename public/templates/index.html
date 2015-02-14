@@ -1,0 +1,14 @@
+<span ng-controller="SalesforceCtrl">
+  <div id="sidebar">
+    <ng-include src="'templates/salesforce/sobject_list.html'"></ng-include>
+    <div id="sidebar_footer"></div>
+  </div>
+
+  <div id="main_view">
+    <span ng-repeat="field in described_sobject.fields">
+      <div>
+        {{field.name}}
+      </div>
+    </span>
+  </div>
+</span>
