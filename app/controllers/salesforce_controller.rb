@@ -1,11 +1,16 @@
 class SalesforceController < ApplicationController
 
-  def index
-  	@salesforce = Salesforce.new
+  before_action :login
 
-  	respond_to do |format|
-  	  format.html
-  	  format.json { render json: @salesforce.sobjects }
-  	end
+  def index
+    respond_to do |format|
+      format.html
+      format.json { render json: @salesforce.sobject_list }
+    end
   end
+
+  private
+    def login
+      @salesforce == nil ? Salesforce.new : @salesforce
+    end
 end
