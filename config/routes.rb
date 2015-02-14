@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  get 'salesforce/index'
+  get 'salesforce/sobject_list'
+  get 'salesforce/describe'
 
   get 'calendar/index'
 
