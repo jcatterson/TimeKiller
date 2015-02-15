@@ -17,6 +17,7 @@
 //= require angular
 //= require angular-resource
 //= require angular-route
+//= require codemirror
 //= require main
 //= require_tree .
 //= require moment

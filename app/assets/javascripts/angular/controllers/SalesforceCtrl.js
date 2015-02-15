@@ -11,8 +11,12 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
   var original_sobject_list;
   var described_objects = {}
+  CodeMirror.commands.autocomplete = function(cm){
+    cm.showHint({hint: CodeMirror.hint.anyword});
+  }
   var codeWindow = CodeMirror.fromTextArea( document.getElementById( 'soql_query' ), {
-    lineNumbers: true
+    lineNumbers: true,
+    extraKeys: {"Ctrl-Space": "autocomplete"}
   });
 
   $scope.sobjects = Salesforce.query( function(result){
