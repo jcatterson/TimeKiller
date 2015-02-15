@@ -11,7 +11,7 @@ class Dir
 
   def self.rm_files_in_directory files, directory
     files.each do |file_to_rm|
-      File.delete "#{directory}/#{file_to_rm}"
+      File.delete "#{directory.to_path}/#{file_to_rm}"
     end
   end
   
