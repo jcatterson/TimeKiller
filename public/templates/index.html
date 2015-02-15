@@ -6,9 +6,10 @@
 
   <div id="main_view">
     <span ng-repeat="field in described_sobject.sobject.fields">
-      <div>
+      <span>
         {{field.name}}
-      </div>
+      </span>
     </span>
   </div>
+  <textarea id="soql_query"></textarea>
 </span>

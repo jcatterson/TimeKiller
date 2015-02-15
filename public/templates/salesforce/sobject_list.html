@@ -7,6 +7,7 @@
     <label for="sobject_search">Search</label>
     <input type="text" ng-model="sobject_search" ng-change="sobjects_like()"/>
   </div>
+
   <div id="sobject_list" ng-repeat-start="sobject in sobjects">
     <div class="sobject_item" ng-click="describe_sobject(sobject)">
       <span>{{sobject}}</span>
