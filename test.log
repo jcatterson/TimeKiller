@@ -1,0 +1,17 @@
+Run options: --seed 45310
+
+# Running:
+
+E.
+
+Finished in 0.057606s, 34.7188 runs/s, 17.3594 assertions/s.
+
+  1) Error:
+SalesforceControllerTest#test_should_get_index:
+ArgumentError: ArgumentError
+    app/models/salesforce.rb:8:in `initialize'
+    app/controllers/salesforce_controller.rb:14:in `new'
+    app/controllers/salesforce_controller.rb:14:in `login'
+    test/controllers/salesforce_controller_test.rb:5:in `block in <class:SalesforceControllerTest>'
+
+2 runs, 1 assertions, 0 failures, 1 errors, 0 skips

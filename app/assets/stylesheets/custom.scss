@@ -1,0 +1,34 @@
+body, html{
+  margin:0;
+  padding:0;
+  height:100%; /* needed for container min-height */
+}
+
+#sidebar{
+  position:relative; /* needed for footer positioning*/
+  height:auto !important; /* real browsers */
+  min-height:100%; /* real browsers */
+  background-color: #3C97B2;
+  width: 20%;
+  display: inline-block;
+  float: left;
+  border-right: 2px solid black;
+  margin-right: 3%;
+  display: inline;
+
+  .header{
+    margin-top: 0px;
+    text-align: center;
+  }
+}
+
+#main_view{
+  width: 76%;
+  display: inline;
+}
+
+#sidebar_footer{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
