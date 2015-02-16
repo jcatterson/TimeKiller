@@ -11,12 +11,23 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
   var original_sobject_list;
   var described_objects = {}
+
   CodeMirror.commands.autocomplete = function(cm){
-    cm.showHint({hint: CodeMirror.hint.anyword});
+    cm.showHint({
+                  hint: CodeMirror.hint.soql,
+                  options: {
+                    tables: {
+                      "abc":["Test", "TEst"],
+                      "def":["1", "2", "3"]
+                    },
+                    defaultTable: "abc"
+                  }
+              });
   }
   var codeWindow = CodeMirror.fromTextArea( document.getElementById( 'soql_query' ), {
     lineNumbers: true,
-    extraKeys: {"Ctrl-Space": "autocomplete"}
+    extraKeys: {"Ctrl-Space": "autocomplete"},
+    mode: "sql"
   });
 
   $scope.sobjects = Salesforce.query( function(result){
