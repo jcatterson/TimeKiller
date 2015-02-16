@@ -11,9 +11,8 @@
  * file per style scope.
  *
  *= require_tree .
+ *= require codeMirror/codemirror
  *= require_self
  *= require custom
  *= require fullcalendar
- *= require codemirror
- *= require show-hint
  */

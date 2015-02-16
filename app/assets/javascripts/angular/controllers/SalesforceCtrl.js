@@ -11,6 +11,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
   var original_sobject_list;
   var described_objects = {}
+
   CodeMirror.commands.autocomplete = function(cm){
     cm.showHint({hint: CodeMirror.hint.anyword});
   }
@@ -46,7 +47,6 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     var first_field = describedObject.sobject.fields[0];
     codeWindow.setValue( "Select " + first_field.name + ", from " + describedObject.sobject.name );
     codeWindow.focus();
-    window.txt = codeWindow;
     codeWindow.doc.setCursor( {line:0, ch:"Select ".length + first_field.name.length + 1} );
   }
 

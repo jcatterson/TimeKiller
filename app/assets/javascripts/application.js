@@ -17,8 +17,8 @@
 //= require angular
 //= require angular-resource
 //= require angular-route
-//= require codemirror
 //= require main
+//= require codeMirror/codemirror
 //= require_tree .
 //= require moment
 //= require fullcalendar
