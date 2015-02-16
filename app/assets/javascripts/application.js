@@ -17,6 +17,7 @@
 //= require angular
 //= require angular-resource
 //= require angular-route
+//= require codeMirror/codemirror
 //= require_tree ../../../vendor/assets/javascripts/codeMirror
 //= require main
 //= require_tree .
