@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   get 'salesforce/sobject_list'
   get 'salesforce/describe'
+  get 'salesforce/query'
 
   get 'calendar/index'
 

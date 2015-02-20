@@ -9,6 +9,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
               };
   var Salesforce = $resource( '/salesforce/sobject_list', {}, {query: query} );
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
+  var Query = $resource( '/salesforce/query', {}, {query: describe} );
   var original_sobject_list;
   var described_objects = {}
 
@@ -36,6 +37,14 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
 
   $scope.sobjects_like = function(){
     $scope.sobjects = _(original_sobject_list).filter( sobject_is_like_search_term ).value();
+  }
+  
+  $scope.query = function(){
+    console.log( "Query!");
+    x = codeWindow.getValue();
+    console.log( x );
+    var params = {"query":codeWindow.getValue()};
+    x = Query.query( params );
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
@@ -68,5 +77,10 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
 .directive('sobjectList', function(){
   return{
     templateUrl: '/templates/salesforce/sobject_list.html'
+  }
+})
+.directive('sobjectResults', function(){
+  return{
+    templateUrl: '/templates/salesforce/sobject_results.html'
   }
 });

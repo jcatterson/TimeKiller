@@ -20,8 +20,17 @@ class SalesforceController < ApplicationController
     end
   end
 
+  def query
+    query = params["query"]
+    res = @salesforce.query( query )
+    respond_to do |format|
+      format.html
+      format.json { render json: res }
+    end
+  end
+
   private
     def login
-      @salesforce = @salesforce == nil ? Salesforce.new : @salesforce
+      @salesforce = Salesforce.new
     end
 end

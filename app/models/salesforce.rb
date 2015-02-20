@@ -10,7 +10,12 @@ class Salesforce
   end
 
   def sobject_list
-    @databasedotcom.list_sobjects
+  	sobjects = @restforce.get("/services/data/v#{SF_API_VERSION}/sobjects").body.sobjects
+  	list = []
+  	sobjects.each do |sobject|
+  		list << sobject.name.to_s
+  	end
+  	list
   end
 
   def describe( sobject_name )
@@ -18,10 +23,14 @@ class Salesforce
   end
 
   def workflow_rules( sobject_name )
-    query( "Select+id,name,fullname,metadata+from+WorkflowRule+where+TableEnumOrId=\'#{sobject_name}\'" )
+    metadata_query( "Select+id,name,fullname,metadata+from+WorkflowRule+where+TableEnumOrId=\'#{sobject_name}\'" )
   end
 
   def query( str_query )
+    @restforce.get "/services/data/v#{SF_API_VERSION}/query/?q=#{str_query}"
+  end
+
+  def metadata_query( str_query )
     @restforce.get "/services/data/v#{SF_API_VERSION}/tooling/query/?q=#{str_query}"
   end
 
