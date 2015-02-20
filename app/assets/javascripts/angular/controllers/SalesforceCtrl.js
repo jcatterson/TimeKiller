@@ -9,7 +9,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
               };
   var Salesforce = $resource( '/salesforce/sobject_list', {}, {query: query} );
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
-  var Query = $resource( '/salesforce/query', {}, {query: describe} );
+  var Query = $resource( '/salesforce/query', {}, {query: query} );
   var original_sobject_list;
   var described_objects = {}
 
@@ -40,11 +40,9 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   }
   
   $scope.query = function(){
-    console.log( "Query!");
-    x = codeWindow.getValue();
-    console.log( x );
-    var params = {"query":codeWindow.getValue()};
-    x = Query.query( params );
+    the_query = codeWindow.getValue();
+    var params = { "query":codeWindow.getValue() };
+    $scope.query_results = Query.query( params );
   }
 
   $scope.describe_sobject = function(sobject_to_describe){

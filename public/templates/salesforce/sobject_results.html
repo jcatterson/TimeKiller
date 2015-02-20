@@ -1,3 +1,19 @@
-<div>
-  This will be the table of the results
-</div>
+<span ng-if="query_results.length > 0">
+  <table>
+    <thead>
+      <tr>
+        <th>
+          Id
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="sobject in query_results">
+        <td>
+          {{sobject.Id}}
+        </td>
+      </tr>
+      <span ng-repeat-end/>
+    </tbody>
+  </table>
+</span>

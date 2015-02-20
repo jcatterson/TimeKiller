@@ -27,7 +27,7 @@ class Salesforce
   end
 
   def query( str_query )
-    @restforce.get "/services/data/v#{SF_API_VERSION}/query/?q=#{str_query}"
+    @restforce.get( "/services/data/v#{SF_API_VERSION}/query/?q=#{str_query}" ).body
   end
 
   def metadata_query( str_query )
