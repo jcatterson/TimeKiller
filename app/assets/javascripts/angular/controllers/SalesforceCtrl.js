@@ -38,56 +38,16 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   $scope.sobjects_like = function(){
     $scope.sobjects = _(original_sobject_list).filter( sobject_is_like_search_term ).value();
   }
-  
+
   $scope.query = function(){
     var the_query = codeWindow.getValue();
     var params = { "query":codeWindow.getValue() };
     Query.query( params, function(res){
       var queryString = the_query.toUpperCase();
       queryString = simpleSqlParser.sql2ast( queryString );
-      var sobjects = formatColsForPage( res, queryString["SELECT"] );
+      var sobjects = createSObjects( res );
       $scope.query_results = {"queryString":queryString, "sobjects":sobjects};
     });
-  }
-
-  formatColsForPage = function( sobjects, cols ){
-    var formatted = [];
-    for( var i = 0; i < sobjects.length; i++ ){
-      var sobject = sobjects[i];
-      sobject = formatSObject( sobject );
-      var formattedSObject = {};
-      for( colIndex in cols ){
-        var col = cols[colIndex].name;
-        var sobjectSplit = col.split('.');
-        var currentSObject = sobject;
-        for( colNameIndex in sobjectSplit ){
-          var colName = sobjectSplit[colNameIndex].toUpperCase();
-          currentSObject = currentSObject[colName];
-          if( !currentSObject ){
-            currentSObject = "";
-            break;
-          }
-          else if( typeof currentSObject === 'object' ){
-            currentSObject = formatSObject( currentSObject );
-          }
-        }
-        formattedSObject[col] = currentSObject;
-      }
-      formatted.push( formattedSObject );
-    }
-    return formatted;
-  }
-
-  formatSObject = function( sobject ){
-    var formattedSobject = {};
-    var cols = listColumnNames( sobject );
-    for( var colIndex in cols ){
-      var colName = cols[colIndex];
-      var colVal = sobject[colName];
-      colName = colName.toUpperCase();
-      formattedSobject[colName] = colVal;
-    }
-    return formattedSobject;
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
@@ -117,13 +77,6 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     return sobject.toUpperCase().indexOf( $scope.sobject_search.toUpperCase() ) >= 0;
   }
 
-  listColumnNames = function( sobject ){
-    var colNames = [];
-    for( var col in sobject ){
-      colNames.push( col );
-    }
-    return colNames;
-  }
 }])
 .directive('sobjectList', function(){
   return{
