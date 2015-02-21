@@ -44,23 +44,32 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     var params = { "query":codeWindow.getValue() };
     Query.query( params, function(res){
       var queryString = the_query.toUpperCase();
-      var sobjects = [];
-      for( var index in res ){
-        var sobject = res[index];
-        console.log( sobject );
-        var formattedSobject = {};
-        var cols = listColumnNames( sobject );
-        for( var colIndex in cols ){
-          var colName = cols[colIndex];
-          var colVal = sobject[colName];
-          colName = colName.toUpperCase();
-          formattedSobject[colName] = colVal;
-        }
-        sobjects.push( formattedSobject );
-      }
+      var sobjects = formatSObjects( res );
       queryString = simpleSqlParser.sql2ast( queryString );
       $scope.query_results = {"queryString":queryString, "sobjects":sobjects};
     });
+  }
+
+  formatSObjects = function( sobjectRes ){
+    var sobjects = [];
+    for( var index in sobjectRes ){
+      var sobject = sobjectRes[index];
+      sobject = formatSObject( sobject );
+      sobjects.push( sobject );
+    }
+    return sobjects;
+  }
+
+  formatSObject = function( sobject ){
+    var formattedSobject = {};
+    var cols = listColumnNames( sobject );
+    for( var colIndex in cols ){
+      var colName = cols[colIndex];
+      var colVal = sobject[colName];
+      colName = colName.toUpperCase();
+      formattedSobject[colName] = colVal;
+    }
+    return formattedSobject;
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
