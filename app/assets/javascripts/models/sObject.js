@@ -1,12 +1,20 @@
-sObject = function( sobjectHash ){
+sObject = function( sobjectHash, metadatas ){
   this.hash = sobjectHash;
+  this.metadatas = metadatas;
 
   this.listColumnNames = function(){
-    var colNames = [];
-    for( var col in this.hash ){
-      colNames.push( col );
+    if( !this.cols ){
+      this.cols = [];
+      for( var col in this.hash ){
+        this.cols.push( col );
+      }
     }
-    return colNames;
+    return this.cols;
+  }
+
+  this.getMetaData = function(){
+    var objectType = this.hash.attributes.type;
+    return this.metadatas[objectType];
   }
 
   this.getFieldValue = function( fieldName ){
@@ -32,10 +40,10 @@ sObject = function( sobjectHash ){
   }
 }
 
-createSObjects = function( sobjectsHash ){
+createSObjects = function( sobjectsHash, metadatas ){
   var sObjects = [];
   for( var i = 0; i < sobjectsHash.length; i++ ){
-    sObjects.push( new sObject( sobjectsHash[i] ) );
+    sObjects.push( new sObject( sobjectsHash[i], metadatas ) );
   }
   return sObjects;
 }

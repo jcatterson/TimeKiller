@@ -45,7 +45,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     Query.query( params, function(res){
       var queryString = the_query.toUpperCase();
       queryString = simpleSqlParser.sql2ast( queryString );
-      var sobjects = createSObjects( res );
+      var sobjects = createSObjects( res, described_objects );
       $scope.query_results = {"queryString":queryString, "sobjects":sobjects};
     });
   }
