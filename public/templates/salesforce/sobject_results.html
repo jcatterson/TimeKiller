@@ -1,19 +1,21 @@
-<span ng-if="query_results.length > 0">
-  <table>
-    <thead>
-      <tr>
-        <th>
-          Id
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="sobject in query_results">
-        <td>
-          {{sobject.Id}}
-        </td>
-      </tr>
-      <span ng-repeat-end/>
-    </tbody>
-  </table>
+<span ng-if="query_results">
+    <table>
+        <thead>
+            <tr>
+                <th ng-repeat="field in query_results['queryString']['SELECT']">
+                    {{field.name}}
+                </tr>
+                <span ng-repeat-end/>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="sobject in query_results['sobjects']">
+                <td ng-repeat="column in query_results['queryString']['SELECT']">
+                    {{sobject[column.name]}}
+                </td>
+            </tr>
+            <span ng-repeat-end/>
+        </tbody>
+    </table>
 </span>

@@ -40,9 +40,27 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   }
   
   $scope.query = function(){
-    the_query = codeWindow.getValue();
+    var the_query = codeWindow.getValue();
     var params = { "query":codeWindow.getValue() };
-    $scope.query_results = Query.query( params );
+    Query.query( params, function(res){
+      var queryString = the_query.toUpperCase();
+      var sobjects = [];
+      for( var index in res ){
+        var sobject = res[index];
+        console.log( sobject );
+        var formattedSobject = {};
+        var cols = listColumnNames( sobject );
+        for( var colIndex in cols ){
+          var colName = cols[colIndex];
+          var colVal = sobject[colName];
+          colName = colName.toUpperCase();
+          formattedSobject[colName] = colVal;
+        }
+        sobjects.push( formattedSobject );
+      }
+      queryString = simpleSqlParser.sql2ast( queryString );
+      $scope.query_results = {"queryString":queryString, "sobjects":sobjects};
+    });
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
@@ -70,6 +88,14 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
 
   sobject_is_like_search_term = function( sobject ){
     return sobject.toUpperCase().indexOf( $scope.sobject_search.toUpperCase() ) >= 0;
+  }
+
+  listColumnNames = function( sobject ){
+    var colNames = [];
+    for( var col in sobject ){
+      colNames.push( col );
+    }
+    return colNames;
   }
 }])
 .directive('sobjectList', function(){
