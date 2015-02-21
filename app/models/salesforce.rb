@@ -19,11 +19,11 @@ class Salesforce
   end
 
   def describe( sobject_name )
-    @restforce.get( "/services/data/v#{SF_API_VERSION}/sobjects/#{sobject_name}/describe")
+    @restforce.get( "/services/data/v#{SF_API_VERSION}/sobjects/#{sobject_name}/describe").body
   end
 
   def workflow_rules( sobject_name )
-    metadata_query( "Select+id,name,fullname,metadata+from+WorkflowRule+where+TableEnumOrId=\'#{sobject_name}\'" )
+    metadata_query( "Select+id,name,fullname,metadata+from+WorkflowRule+where+TableEnumOrId=\'#{sobject_name}\'" ).body
   end
 
   def query( str_query )

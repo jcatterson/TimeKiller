@@ -11,7 +11,7 @@ class SalesforceController < ApplicationController
 
   def describe
     sobject = params["sobject"]
-    sobject_described = @salesforce.describe( sobject ).body
+    sobject_described = @salesforce.describe( sobject )
     workflow_rules = @salesforce.workflow_rules sobject
     sf_object = { "sobject"=>sobject_described, "workflowrules"=>workflow_rules}
     respond_to do |format|

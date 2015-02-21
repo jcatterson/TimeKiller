@@ -12,7 +12,7 @@ sObject = function( sobjectHash, metadatas ){
     return this.cols;
   }
 
-  this.getMetaData = function(){
+  this.getDescribe = function(){
     var objectType = this.hash.attributes.type;
     return this.metadatas[objectType];
   }
