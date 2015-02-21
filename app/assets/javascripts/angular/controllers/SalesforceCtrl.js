@@ -42,22 +42,43 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   $scope.query = function(){
     var the_query = codeWindow.getValue();
     var params = { "query":codeWindow.getValue() };
-    Query.query( params, function(res){
+    var sobjects = Query.query( params, function(res){
       var queryString = the_query.toUpperCase();
-      var sobjects = formatSObjects( res );
       queryString = simpleSqlParser.sql2ast( queryString );
+      sobjects = formatColsForPage( sobjects, queryString["SELECT"] );
       $scope.query_results = {"queryString":queryString, "sobjects":sobjects};
     });
+
   }
 
-  formatSObjects = function( sobjectRes ){
-    var sobjects = [];
-    for( var index in sobjectRes ){
-      var sobject = sobjectRes[index];
+  formatColsForPage = function( sobjects, cols ){
+    var formatted = [];
+    for( var i = 0; i < sobjects.length; i++ ){
+      var sobject = sobjects[i];
       sobject = formatSObject( sobject );
-      sobjects.push( sobject );
+      var formattedSObject = {};
+      for( colIndex in cols ){
+        var col = cols[colIndex].name;
+        var sobjectSplit = col.split('.');
+        var currentSObject = sobject;
+        for( colNameIndex in sobjectSplit ){
+          var colName = sobjectSplit[colNameIndex].toUpperCase();
+          if( currentSObject == null ){
+            console.log( "Something happened");
+            currentSObject = "";
+            break;
+          }
+          currentSObject = currentSObject[colName];
+          if( typeof currentSObject === 'object' ){
+            currentSObject = formatSObject( currentSObject );
+          }
+        }
+        formattedSObject[col] = currentSObject;
+        console.log( currentSObject );
+      }
+      formatted.push( formattedSObject );
     }
-    return sobjects;
+    return formatted;
   }
 
   formatSObject = function( sobject ){
