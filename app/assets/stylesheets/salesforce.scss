@@ -35,3 +35,15 @@
 #sobject_search_list{
   margin-bottom: 10px;
 }
+
+#sobject_table_results{
+  border-collapse: collapse;
+  border: 1px solid black;
+
+  td, th{
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
