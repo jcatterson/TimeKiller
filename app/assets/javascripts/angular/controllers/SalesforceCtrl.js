@@ -42,13 +42,12 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   $scope.query = function(){
     var the_query = codeWindow.getValue();
     var params = { "query":codeWindow.getValue() };
-    var sobjects = Query.query( params, function(res){
+    Query.query( params, function(res){
       var queryString = the_query.toUpperCase();
       queryString = simpleSqlParser.sql2ast( queryString );
-      sobjects = formatColsForPage( sobjects, queryString["SELECT"] );
+      var sobjects = formatColsForPage( res, queryString["SELECT"] );
       $scope.query_results = {"queryString":queryString, "sobjects":sobjects};
     });
-
   }
 
   formatColsForPage = function( sobjects, cols ){
@@ -63,18 +62,16 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
         var currentSObject = sobject;
         for( colNameIndex in sobjectSplit ){
           var colName = sobjectSplit[colNameIndex].toUpperCase();
-          if( currentSObject == null ){
-            console.log( "Something happened");
+          currentSObject = currentSObject[colName];
+          if( !currentSObject ){
             currentSObject = "";
             break;
           }
-          currentSObject = currentSObject[colName];
-          if( typeof currentSObject === 'object' ){
+          else if( typeof currentSObject === 'object' ){
             currentSObject = formatSObject( currentSObject );
           }
         }
         formattedSObject[col] = currentSObject;
-        console.log( currentSObject );
       }
       formatted.push( formattedSObject );
     }

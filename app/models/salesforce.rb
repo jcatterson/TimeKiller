@@ -10,12 +10,12 @@ class Salesforce
   end
 
   def sobject_list
-  	sobjects = @restforce.get("/services/data/v#{SF_API_VERSION}/sobjects").body.sobjects
-  	list = []
-  	sobjects.each do |sobject|
-  		list << sobject.name.to_s
-  	end
-  	list
+    sobjects = @restforce.get("/services/data/v#{SF_API_VERSION}/sobjects").body.sobjects
+    list = []
+    sobjects.each do |sobject|
+      list << sobject.name.to_s
+    end
+    list
   end
 
   def describe( sobject_name )
@@ -27,12 +27,7 @@ class Salesforce
   end
 
   def query( str_query )
-    response = @restforce.get( "/services/data/v#{SF_API_VERSION}/query/?q=#{str_query}" ).body
-    sobjects = []
-    response.each do |sobject|
-    	sobjects.push( sobject )
-    end
-    sobjects
+    return @restforce.get( "/services/data/v#{SF_API_VERSION}/query/?q=#{str_query}" ).body
   end
 
   def metadata_query( str_query )
