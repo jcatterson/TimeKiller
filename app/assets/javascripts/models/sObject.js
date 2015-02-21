@@ -26,7 +26,8 @@ sObject = function( sobjectHash, metadatas ){
       var index = _.findIndex( cols, function(col){
                     return col.toUpperCase() == field;
                   });
-      currentObject = currentObject.hash[ cols[index] ];
+      var colName = cols[index];
+      currentObject = currentObject.hash[ colName ];
 
       if( !currentObject ){
         currentObject = '';
