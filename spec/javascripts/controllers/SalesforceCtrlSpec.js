@@ -50,5 +50,35 @@ describe("SalesforceCtrl", function() {
     });
   });
 
-});
+  describe(".query", function(){
+    var queryResults;
+    beforeEach( inject( function($compile){
+      var element = '<textarea ui-code-mirror="true"></textarea>';
+      element = $compile(element)(scope);
 
+      queryResults = [{
+                        "attributes":{
+                          "type":"Account"
+                        },
+                        "Id":"001j000000G9Rq5AAF"
+                      },
+                      {
+                        "attributes":{
+                          "type":"Account"
+                        },
+                        "Id":"001j000000G9Rq5AAG"
+                      }];
+      var regExpression = new RegExp( "[salesforce/query?query=].*" );
+
+      httpBackend.expectGET(regExpression).respond( queryResults );
+      scope.$digest();
+    }));
+    it("queries to create sObjects ", function(){
+      scope.codeWindow.setValue("Select Id from Account");
+      scope.query();
+      httpBackend.flush();
+      var sobjects = createSObjects( queryResults, {} );
+      expect( JSON.stringify(scope.query_results["sobjects"]) ).toEqual( JSON.stringify(sobjects) );
+    });
+  });
+});
