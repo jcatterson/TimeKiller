@@ -25,11 +25,25 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     var the_query = $scope.codeWindow.getValue();
     var params = { "query":the_query };
     Query.query( params, function(res){
-      var queryString = the_query.toUpperCase();
-      queryString = simpleSqlParser.sql2ast( queryString );
+      var queryString = readSOQL( the_query );
       var sobjects = createSObjects( res, described_objects );
       $scope.query_results = {"queryString":queryString, "sobjects":sobjects};
     });
+  }
+
+  readSOQL = function( theQuery ){
+    var queryString = theQuery.toUpperCase();
+    queryString = simpleSqlParser.sql2ast( queryString );
+    var columns = queryString["SELECT"];
+    for( var i = 0; i < columns.length; i++ ){
+      var col = columns[i].name;
+      if( col.indexOf("(") == 0 && col.lastIndexOf(")") == col.length - 1){
+        var innerQuery = col.substring(1, col.length-1);
+        columns[i] = simpleSqlParser.sql2ast( innerQuery );
+      }
+
+    }
+    return queryString;
   }
 
   $scope.describe_sobject = function(sobject_to_describe){

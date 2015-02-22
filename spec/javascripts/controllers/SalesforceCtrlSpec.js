@@ -51,7 +51,7 @@ describe("SalesforceCtrl", function() {
   });
 
   describe(".query", function(){
-    var queryResults;
+    var queryResults, innerQuery;
     beforeEach( inject( function($compile){
       var element = '<textarea ui-code-mirror="true"></textarea>';
       element = $compile(element)(scope);
@@ -71,8 +71,8 @@ describe("SalesforceCtrl", function() {
       var regExpression = new RegExp( "[salesforce/query?query=].*" );
 
       httpBackend.expectGET(regExpression).respond( queryResults );
-
-      scope.codeWindow.setValue("Select Id from Account");
+      innerQuery = "Select Id from Opportunities".toUpperCase();
+      scope.codeWindow.setValue("Select Id, (" + innerQuery + ") from Account");
       scope.query();
       httpBackend.flush();
     }));
@@ -85,6 +85,8 @@ describe("SalesforceCtrl", function() {
     it("Displays the columns queried for", function(){
       var columns = scope.query_results["queryString"]["SELECT"];
       expect( columns[0].name ).toEqual("ID");
+      innerQuery = simpleSqlParser.sql2ast( innerQuery );
+      expect( JSON.stringify(columns[1]) ).toEqual( JSON.stringify(innerQuery) );
     });
   });
 });
