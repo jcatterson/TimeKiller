@@ -17,21 +17,33 @@ sObject = function( sobjectHash, metadatas ){
     return this.metadatas[objectType];
   }
 
-  this.getFieldValue = function( fieldName ){
-    var fieldLookups = fieldName.toUpperCase().split('.');
+  this.getFieldValue = function( column ){
+    var tableName = [];
+    if( column.isSubQuery ){
+      tableName.push( column.parentName );
+    }
+    var fieldLookups = tableName.concat( column.name.toUpperCase().split('.') );
     var currentObject = this;
     for( var i in fieldLookups ){
       var field = fieldLookups[i];
+
       var cols = currentObject.listColumnNames();
       var index = _.findIndex( cols, function(col){
                     return col.toUpperCase() == field;
                   });
       var colName = cols[index];
       currentObject = currentObject.hash[ colName ];
-
       if( !currentObject ){
         currentObject = '';
         break;
+      }
+      else if( currentObject.constructor === Array ){
+        var values = [];
+        for( var x = 0; x < currentObject.length; x++ ){
+          column.isSubQuery = false;
+          values.push( new sObject( currentObject[x], this.metadatas ).getFieldValue( column ) );
+        }
+        return values;
       }
       else if( typeof currentObject === 'object' ){
         currentObject = new sObject( currentObject );
