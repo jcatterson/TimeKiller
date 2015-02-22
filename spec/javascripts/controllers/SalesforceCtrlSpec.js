@@ -83,10 +83,13 @@ describe("SalesforceCtrl", function() {
     });
 
     it("Displays the columns queried for", function(){
-      var columns = scope.query_results["queryString"]["SELECT"];
+      var columns = scope.query_results["queryString"];
       expect( columns[0].name ).toEqual("ID");
+      expect( columns[0].isSubQuery ).toEqual( false );
       innerQuery = simpleSqlParser.sql2ast( innerQuery );
-      expect( JSON.stringify(columns[1]) ).toEqual( JSON.stringify(innerQuery) );
+      expect( columns[1].name ).toEqual( innerQuery["SELECT"][0].name );
+      expect( columns[1].parentName ).toEqual( innerQuery["FROM"][0].table );
+      expect( columns[1].isSubQuery ).toEqual( true );
     });
   });
 });

@@ -2,16 +2,15 @@
     <table id="sobject_table_results">
         <thead>
             <tr>
-                <th ng-repeat="field in query_results['queryString']['SELECT']">
+                <th ng-repeat="field in query_results['queryString']">
                     {{field.name}}
-                </tr>
-                <span ng-repeat-end/>
                 </th>
+                <span ng-repeat-end/>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="sobject in query_results['sobjects']">
-                <td ng-repeat="column in query_results['queryString']['SELECT']">
+                <td ng-repeat="column in query_results['queryString']">
                     {{sobject.getFieldValue( column.name ) }}
                 </td>
             </tr>
