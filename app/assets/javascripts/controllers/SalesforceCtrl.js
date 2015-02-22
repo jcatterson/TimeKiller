@@ -13,19 +13,6 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   var original_sobject_list;
   var described_objects = {}
 
-  CodeMirror.commands.autocomplete = function(cm){
-    cm.showHint({
-                  hint: CodeMirror.hint.soql,
-                  options: {
-                    tables: {
-                      "abc":["Test", "TEst"],
-                      "def":["1", "2", "3"]
-                    },
-                    defaultTable: "abc"
-                  }
-              });
-  }
-
   $scope.sobjects = Salesforce.query( function(result){
     original_sobject_list = _.clone( result );
   });
@@ -86,6 +73,19 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     return {
       restrict: "A",
       link: function( scope, element, attrs ){
+        CodeMirror.commands.autocomplete = function(cm){
+          cm.showHint({
+                        hint: CodeMirror.hint.soql,
+                        options: {
+                          tables: {
+                            "abc":["Test", "TEst"],
+                            "def":["1", "2", "3"]
+                          },
+                          defaultTable: "abc"
+                        }
+                    });
+        }
+
         scope.codeWindow = CodeMirror.fromTextArea( element[0], {
           lineNumbers: true,
           extraKeys: {"Ctrl-Space": "autocomplete"},
