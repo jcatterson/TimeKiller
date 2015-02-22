@@ -55,7 +55,7 @@ describe("SalesforceCtrl", function() {
     beforeEach( inject( function($compile){
       var element = '<textarea ui-code-mirror="true"></textarea>';
       element = $compile(element)(scope);
-
+      scope.$digest();
       queryResults = [{
                         "attributes":{
                           "type":"Account"
@@ -71,14 +71,20 @@ describe("SalesforceCtrl", function() {
       var regExpression = new RegExp( "[salesforce/query?query=].*" );
 
       httpBackend.expectGET(regExpression).respond( queryResults );
-      scope.$digest();
-    }));
-    it("queries to create sObjects ", function(){
+
       scope.codeWindow.setValue("Select Id from Account");
       scope.query();
       httpBackend.flush();
+    }));
+
+    it("Displays query results in \"sobjects\" ", function(){
       var sobjects = createSObjects( queryResults, {} );
       expect( JSON.stringify(scope.query_results["sobjects"]) ).toEqual( JSON.stringify(sobjects) );
+    });
+
+    it("Displays the columns queried for", function(){
+      var columns = scope.query_results["queryString"]["SELECT"];
+      expect( columns[0].name ).toEqual("ID");
     });
   });
 });
