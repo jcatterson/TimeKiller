@@ -6,8 +6,6 @@
 
 src_files:
   - assets/application.js
-  - assets/javascripts/models/*.js
-  - assets/javascripts/controllers/*.js
 
 # stylesheets
 #

@@ -25,11 +25,6 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
                   }
               });
   }
-  var codeWindow = CodeMirror.fromTextArea( document.getElementById( 'soql_query' ), {
-    lineNumbers: true,
-    extraKeys: {"Ctrl-Space": "autocomplete"},
-    mode: "sql"
-  });
 
   $scope.sobjects = Salesforce.query( function(result){
     original_sobject_list = _.clone( result );
@@ -40,8 +35,8 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   }
 
   $scope.query = function(){
-    var the_query = codeWindow.getValue();
-    var params = { "query":codeWindow.getValue() };
+    var the_query = $scope.codeWindow.getValue();
+    var params = { "query":the_query };
     Query.query( params, function(res){
       var queryString = the_query.toUpperCase();
       queryString = simpleSqlParser.sql2ast( queryString );
@@ -67,16 +62,14 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   initializeSOQL = function(){
     var describedObject = $scope.described_sobject;
     var first_field = describedObject.sobject.fields[0];
-    codeWindow.setValue( "Select " + first_field.name + ", from " + describedObject.sobject.name );
-    codeWindow.focus();
-    window.txt = codeWindow;
-    codeWindow.doc.setCursor( {line:0, ch:"Select ".length + first_field.name.length + 1} );
+    $scope.codeWindow.setValue( "Select " + first_field.name + ", from " + describedObject.sobject.name );
+    $scope.codeWindow.focus();
+    $scope.codeWindow.doc.setCursor( {line:0, ch:"Select ".length + first_field.name.length + 1} );
   }
 
   sobject_is_like_search_term = function( sobject ){
     return sobject.toUpperCase().indexOf( $scope.sobject_search.toUpperCase() ) >= 0;
   }
-
 }])
 .directive('sobjectList', function(){
   return{
@@ -87,4 +80,18 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   return{
     templateUrl: '/templates/salesforce/sobject_results.html'
   }
-});
+})
+.directive('uiCodeMirror', [
+  function(){
+    return {
+      restrict: "A",
+      link: function( scope, element, attrs ){
+        scope.codeWindow = CodeMirror.fromTextArea( element[0], {
+          lineNumbers: true,
+          extraKeys: {"Ctrl-Space": "autocomplete"},
+          mode: "sql"
+        });
+      }
+    }
+  }
+]);
