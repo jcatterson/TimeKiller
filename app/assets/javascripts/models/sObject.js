@@ -18,52 +18,46 @@ sObject = function( sobjectHash, metadatas ){
   }
 
   this.getFieldValue = function( column ){
-    var tableName = [];
-    if( column.isSubQuery ){
-      console.log( "The column is a sub query " );
-      tableName.push( column.parentName );
+    var lookups = column.name.split('.');
+    var columnToFind = lookups[0];
+    var ourCols = this.listColumnNames();
+    var index = _.findIndex( ourCols, function(ourCol){
+      return ourCol.toUpperCase() == columnToFind.toUpperCase();
+    });
+    var matchingColName = ourCols[index];
+    if( !matchingColName ){
+      return "";
     }
-    var fieldLookups = tableName.concat( column.name.toUpperCase().split('.') );
-    var currentObject = this;
-    for( var i in fieldLookups ){
-      var field = fieldLookups[i];
+    var colValue = this.hash[ matchingColName ];
 
-      var cols = currentObject.listColumnNames();
-      console.log( "Field" + field );
-      console.log( "What are my cols?" + cols );
-      var index = _.findIndex( cols, function(col){
-                    return col.toUpperCase() == field;
-                  });
-      var colName = cols[index];
-      console.log( "What is the cols name?" + colName );
-      console.log( colName );
-      currentObject = currentObject.hash[ colName ];
-      console.log( "What is my curentObject" );
-      console.log( currentObject );
-      if( !currentObject ){
-        currentObject = '';
-        break;
-      }
-      else if( currentObject.constructor === Array ){
-        var values = [];
-        console.log("Current Object: " );
-        console.log( currentObject );
-        for( var x = 0; x < currentObject.length; x++ ){
-          alert( "We changed it!");
-          column.isSubQuery = false;
-          var childRec = new sObject( currentObject[x], this.metadatas );
-          var answers = childRec.getFieldValue( column );
-          values.push( answers );
+    var deeperLookup = lookups.splice( 1, lookups.length );
+    deeperLookup = deeperLookup.join('.');
+    deeperLookup = {
+      name:deeperLookup
+    };
+
+    if( colValue.constructor === Array ){
+      var answers = [];
+      for( var i = 0; i < colValue.length; i++){
+        var sObj = colValue[i];
+        sObj = new sObject( sObj );
+        var ans = sObj.getFieldValue( deeperLookup );
+        if( ans.constructor === Array ){
+          answers.concat( ans );
         }
-        console.log("What are my values?" + values );
-        return values;
+        else{
+          answers.push( ans );
+        }
       }
-      else if( typeof currentObject === 'object' ){
-        console.log( "We are an sObject ");
-        currentObject = new sObject( currentObject );
-      }
+      return answers;
     }
-    return currentObject;
+    else if( typeof colValue === "object"){
+      var lookupObject = new sObject( colValue );
+      return lookupObject.getFieldValue( deeperLookup );
+    }
+    else{
+      return colValue;
+    }
   }
 }
 
