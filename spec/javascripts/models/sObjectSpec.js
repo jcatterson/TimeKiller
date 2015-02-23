@@ -2,9 +2,7 @@ describe("sObject", function() {
   var sObjectHash;
   var sObj;
   var DEFAULT_COLUMNS_ON_SOBJ = 5;
-  var ACCOUNT_FIELD = {
-    name:"ACCOUNTNUMBER",
-  };
+  var ACCOUNT_FIELD = "ACCOUNTNUMBER";
   var ACCOUNT_FIELD_VALUE = "CC978213";
 
   beforeEach(function(){
@@ -34,7 +32,7 @@ describe("sObject", function() {
         "Name": "Justin Catterson"
       }
     };
-    sObjectHash[ACCOUNT_FIELD.name] = ACCOUNT_FIELD_VALUE;
+    sObjectHash[ACCOUNT_FIELD] = ACCOUNT_FIELD_VALUE;
     sObj = new sObject(sObjectHash);
   });
 
@@ -61,23 +59,19 @@ describe("sObject", function() {
       expect(sObj.getFieldValue(ACCOUNT_FIELD)).toEqual(ACCOUNT_FIELD_VALUE);
     });
     it("expect case insensitive", function(){
-      ACCOUNT_FIELD.name = ACCOUNT_FIELD.name.toLowerCase();
+      ACCOUNT_FIELD = ACCOUNT_FIELD.toLowerCase();
       expect(sObj.getFieldValue(ACCOUNT_FIELD)).toEqual(ACCOUNT_FIELD_VALUE);
     });
     it("expect non-existing to return blank", function(){
-      ACCOUNT_FIELD.name = 'garbage';
+      ACCOUNT_FIELD = 'garbage';
       expect(sObj.getFieldValue(ACCOUNT_FIELD)).toEqual("");
     });
     it( "expect children fields to be found", function(){
-      var opportunityField = {
-        name:"OPPORTUNITIES.STAGENAME",
-      };
+      var opportunityField = "OPPORTUNITIES.STAGENAME";
       expect( sObj.getFieldValue(opportunityField) ).toEqual( ["Closed Won", "Open"] );
     });
     it( "expect parent fields to be found", function(){
-      var parentField = {
-        name: "Owner.Name",
-      };
+      var parentField = "Owner.Name";
       expect( sObj.getFieldValue( parentField ) ).toEqual("Justin Catterson");
     });
   });

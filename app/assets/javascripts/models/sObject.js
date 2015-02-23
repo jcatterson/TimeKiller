@@ -18,7 +18,7 @@ sObject = function( sobjectHash, metadatas ){
   }
 
   this.getFieldValue = function( column ){
-    var lookups = column.name.split('.');
+    var lookups = column.split('.');
     var columnToFind = lookups[0];
     var ourCols = this.listColumnNames();
     var index = _.findIndex( ourCols, function(ourCol){
@@ -32,9 +32,6 @@ sObject = function( sobjectHash, metadatas ){
 
     var deeperLookup = lookups.splice( 1, lookups.length );
     deeperLookup = deeperLookup.join('.');
-    deeperLookup = {
-      name:deeperLookup
-    };
 
     if( colValue.constructor === Array ){
       var answers = [];
