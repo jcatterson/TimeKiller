@@ -1,8 +1,10 @@
 describe("sObject", function() {
   var sObjectHash;
   var sObj;
-  var DEFAULT_COLUMNS_ON_SOBJ = 3;
-  var ACCOUNT_FIELD = "AccountNumber";
+  var DEFAULT_COLUMNS_ON_SOBJ = 5;
+  var ACCOUNT_FIELD = {
+    name:"ACCOUNTNUMBER",
+  };
   var ACCOUNT_FIELD_VALUE = "CC978213";
 
   beforeEach(function(){
@@ -11,8 +13,28 @@ describe("sObject", function() {
         "type":"Account"
       },
       "Id":"001j000000G9Rq5AAF",
+      "Opportunities":[
+        {
+          "attributes":{
+            "type":"Opportunity"
+          },
+          "StageName":"Closed Won"
+        },
+        {
+          "attributes":{
+            "type":"Opportunity"
+          },
+          "StageName":"Open"
+        }
+      ],
+      "Owner":{
+        "attributes":{
+          "type": "Contact"
+        },
+        "Name": "Justin Catterson"
+      }
     };
-    sObjectHash[ACCOUNT_FIELD] = ACCOUNT_FIELD_VALUE;
+    sObjectHash[ACCOUNT_FIELD.name] = ACCOUNT_FIELD_VALUE;
     sObj = new sObject(sObjectHash);
   });
 
@@ -39,10 +61,24 @@ describe("sObject", function() {
       expect(sObj.getFieldValue(ACCOUNT_FIELD)).toEqual(ACCOUNT_FIELD_VALUE);
     });
     it("expect case insensitive", function(){
-      expect(sObj.getFieldValue(ACCOUNT_FIELD.toUpperCase())).toEqual(ACCOUNT_FIELD_VALUE);
+      ACCOUNT_FIELD.name = ACCOUNT_FIELD.name.toLowerCase();
+      expect(sObj.getFieldValue(ACCOUNT_FIELD)).toEqual(ACCOUNT_FIELD_VALUE);
     });
     it("expect non-existing to return blank", function(){
-      expect(sObj.getFieldValue("nonExistingField")).toEqual("");
+      ACCOUNT_FIELD.name = 'garbage';
+      expect(sObj.getFieldValue(ACCOUNT_FIELD)).toEqual("");
+    });
+    it( "expect children fields to be found", function(){
+      var opportunityField = {
+        name:"OPPORTUNITIES.STAGENAME",
+      };
+      expect( sObj.getFieldValue(opportunityField) ).toEqual( ["Closed Won", "Open"] );
+    });
+    it( "expect parent fields to be found", function(){
+      var parentField = {
+        name: "Owner.Name",
+      };
+      expect( sObj.getFieldValue( parentField ) ).toEqual("Justin Catterson");
     });
   });
 });
