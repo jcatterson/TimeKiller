@@ -36,20 +36,16 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     var cols = [];
     var soqlCols = queryString["SELECT"];
     for( var i = 0; i < soqlCols.length; i++ ){
-      var col = {};
       var currentCol = soqlCols[i];
       var innerQuery = currentCol["SELECT"];
       if( currentCol.name ){
-        col.name = currentCol.name;
-        col.isSubQuery = false;
-        col.parentName = queryString["FROM"][0].table;
-        cols.push( col );
+        cols.push( currentCol.name );
       }
       else if( innerQuery ){
+        console.log("Hey inner query" );
+        var tableName = currentCol["FROM"][0].table;
         for( var j = 0; j < innerQuery.length; j++ ){
-          col.name = innerQuery[j].name;
-          col.isSubQuery = true;
-          col.parentName = currentCol["FROM"][0].table;
+          col = tableName + "." + innerQuery[j].name;
           cols.push( col );
         }
       }

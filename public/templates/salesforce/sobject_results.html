@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th ng-repeat="field in query_results['queryString']">
-                    {{field.name}}
+                    {{field}}
                 </th>
                 <span ng-repeat-end/>
             </tr>
@@ -11,7 +11,7 @@
         <tbody>
             <tr ng-repeat="sobject in query_results['sobjects']">
                 <td ng-repeat="column in query_results['queryString']">
-                    {{sobject.getFieldValue( column.name ) }}
+                    {{sobject.getFieldValue( column ) }}
                 </td>
             </tr>
             <span ng-repeat-end/>

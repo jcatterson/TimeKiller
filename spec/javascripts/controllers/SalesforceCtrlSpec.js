@@ -84,12 +84,9 @@ describe("SalesforceCtrl", function() {
 
     it("Displays the columns queried for", function(){
       var columns = scope.query_results["queryString"];
-      expect( columns[0].name ).toEqual("ID");
-      expect( columns[0].isSubQuery ).toEqual( false );
+      expect( columns[0] ).toEqual("ID");
       innerQuery = simpleSqlParser.sql2ast( innerQuery );
-      expect( columns[1].name ).toEqual( innerQuery["SELECT"][0].name );
-      expect( columns[1].parentName ).toEqual( innerQuery["FROM"][0].table );
-      expect( columns[1].isSubQuery ).toEqual( true );
+      expect( columns[1] ).toEqual( innerQuery["FROM"][0].table + '.' + innerQuery["SELECT"][0].name );
     });
   });
 });
