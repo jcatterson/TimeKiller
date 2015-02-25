@@ -17,7 +17,7 @@ function sObjectTable( queryString, sObjects ){
             }
             else{
                 var table = new sObjectTable( col, sObjects );
-                headerRow.push( {table_name: col["SELECT"],
+                headerRow.push( {tableName: col["FROM"][0].table,
                             headers: table.createHeaders()
                             });
             }
