@@ -6,6 +6,7 @@ th - colspan
 function sObjectTable( queryString, sObjects ){
     this.cellValues;
     this.queryString = queryString;
+    this.sObjects = _.clone( sObjects );
 
     this.createHeaders = function(){
         var headerRow = [];
@@ -16,7 +17,7 @@ function sObjectTable( queryString, sObjects ){
                 headerRow.push( col.name );
             }
             else{
-                var table = new sObjectTable( col, sObjects );
+                var table = new sObjectTable( col, this.sObjects );
                 headerRow.push( {tableName: col["FROM"][0].table,
                             headers: table.createHeaders()
                             });
@@ -40,6 +41,7 @@ function sObjectTable( queryString, sObjects ){
                 th.name = header.tableName;
                 th.colSpan = header.headers.length;
                 th.subHeaders = header.headers;
+                th.data = this.getColumnsData( th.name );
                 innerHeaders.push( th );
             }
             else{
@@ -71,6 +73,24 @@ function sObjectTable( queryString, sObjects ){
             }
         }
         return actualHeaders;
+    }
+
+    this.getRows = function(){
+        var rows = [];
+        var cols = queryString["SELECT"];
+        for( var i = 0; i < cols.length; i++){
+            var col = cols[i];
+        }
+        return rows;
+    }
+
+    this.getColumnsData = function( columnName ){
+        var data = [];
+        for( var i = 0; i < this.sObjects.length; i++ ){
+            var sObj = this.sObjects[i];
+            data.push( sObj.getFieldValue( columnName ) );
+        }
+        return data;
     }
     this.headers = this.getHeaders();
 }

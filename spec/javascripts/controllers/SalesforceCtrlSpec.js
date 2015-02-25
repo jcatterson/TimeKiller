@@ -77,11 +77,6 @@ describe("SalesforceCtrl", function() {
       httpBackend.flush();
     }));
 
-    it("Displays query results in \"sobjects\" ", function(){
-      var sobjects = createSObjects( queryResults, {} );
-      expect( JSON.stringify(scope.query_results["sobjects"]) ).toEqual( JSON.stringify(sobjects) );
-    });
-
     it("Displays the columns queried for", function(){
       var columns = scope.query_results["queryString"];
       expect( columns[0] ).toEqual("ID");
