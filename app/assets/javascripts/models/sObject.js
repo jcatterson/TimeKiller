@@ -33,28 +33,28 @@ sObject = function( sobjectHash, metadatas ){
     var deeperLookup = lookups.splice( 1, lookups.length );
     deeperLookup = deeperLookup.join('.');
 
-    if( colValue.constructor === Array ){
-      var answers = [];
-      for( var i = 0; i < colValue.length; i++){
-        var sObj = colValue[i];
-        sObj = new sObject( sObj );
-        var ans = sObj.getFieldValue( deeperLookup );
-        if( ans.constructor === Array ){
-          answers.concat( ans );
+    if( colValue ){
+      if( colValue.constructor === Array ){
+        var answers = [];
+        for( var i = 0; i < colValue.length; i++){
+          var sObj = colValue[i];
+          sObj = new sObject( sObj );
+          var ans = sObj.getFieldValue( deeperLookup );
+          if( ans.constructor === Array ){
+            answers.concat( ans );
+          }
+          else{
+            answers.push( ans );
+          }
         }
-        else{
-          answers.push( ans );
-        }
+        return answers;
       }
-      return answers;
+      else if( typeof colValue === "object"){
+        var lookupObject = new sObject( colValue );
+        return lookupObject.getFieldValue( deeperLookup );
+      }
     }
-    else if( typeof colValue === "object"){
-      var lookupObject = new sObject( colValue );
-      return lookupObject.getFieldValue( deeperLookup );
-    }
-    else{
-      return colValue;
-    }
+    return colValue;
   }
 }
 

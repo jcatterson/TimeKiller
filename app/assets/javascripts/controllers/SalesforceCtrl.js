@@ -42,7 +42,6 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
         cols.push( currentCol.name );
       }
       else if( innerQuery ){
-        console.log("Hey inner query" );
         var tableName = currentCol["FROM"][0].table;
         for( var j = 0; j < innerQuery.length; j++ ){
           col = tableName + "." + innerQuery[j].name;
