@@ -70,7 +70,7 @@ function sObjectTable( queryString, sObjects ){
                 actualHeaders[1].push( header );
             }
         }
-
         return actualHeaders;
     }
+    this.headers = this.getHeaders();
 }

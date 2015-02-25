@@ -1,4 +1,13 @@
-<span ng-if="query_results">
+<span ng-if="queryTable">
+    <table id="sobject_table_results">
+        <thead>
+            <tr ng-repeat="row in queryTable.headers">
+                <th ng-repeat="header in row" colspan="{{header.colSpan}}" rowspan="{{header.rowSpan}}">
+                    {{header.name}}
+                </th>
+            </tr>
+        </thead>
+    </table>
     <table id="sobject_table_results">
         <thead>
             <tr>
