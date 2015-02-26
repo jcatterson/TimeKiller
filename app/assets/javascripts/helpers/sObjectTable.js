@@ -41,7 +41,6 @@ function sObjectTable( queryString, sObjects ){
                 th.name = header.tableName;
                 th.colSpan = header.headers.length;
                 th.subHeaders = header.headers;
-                th.data = this.getColumnsData( th.name );
                 innerHeaders.push( th );
             }
             else{
@@ -75,22 +74,49 @@ function sObjectTable( queryString, sObjects ){
         return actualHeaders;
     }
 
-    this.getRows = function(){
+    this.getRow = function( index ){
         var rows = [];
-        var cols = queryString["SELECT"];
-        for( var i = 0; i < cols.length; i++){
-            var col = cols[i];
+        var sObj = this.sObjects[index];
+        var dataCols = getSOQLDataCols( this.queryString );
+        var ans = [];
+        for( var i = 0; i < dataCols.length; i++ ){
+            ans.push( sObj.getFieldValue( dataCols[i] ) );
         }
-        return rows;
+        return sObj;
+    }
+
+    function getSOQLDataCols( mainQuery, tableName ){
+        var cols = mainQuery["SELECT"];
+        var dataCol = [];
+        for( var i = 0; i < cols.length; i++ ){
+            var col = cols[i];
+            if( col.name ){
+                if( tableName )
+                    dataCol.push( tableName + '.' + col.name );
+                else
+                    dataCol.push( col.name );
+            }
+            else{
+                var myCols = getSOQLDataCols( col, col["FROM"][0].table );
+                dataCol = dataCol.concat( myCols );
+            }
+        }
+        return dataCol;
     }
 
     this.getColumnsData = function( columnName ){
         var data = [];
         for( var i = 0; i < this.sObjects.length; i++ ){
             var sObj = this.sObjects[i];
-            data.push( sObj.getFieldValue( columnName ) );
+            var ans = sObj.getFieldValue( columnName );
+            if( _.isArray( ans ) )
+                data.concat( ans );
+            else{
+                data.push( ans );
+            }
         }
         return data;
     }
+
     this.headers = this.getHeaders();
 }

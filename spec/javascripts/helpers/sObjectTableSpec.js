@@ -1,12 +1,14 @@
 describe("sObjectTable", function() {
     var table, query, innerQuery;
+    var results;
     beforeEach(function(){
         innerQuery = 'Select Id,StageName from Opportunities';
         innerQuery = simpleSqlParser.sql2ast( innerQuery.toUpperCase() );
         query = "Select Id FROM Account".toUpperCase();
         query = simpleSqlParser.sql2ast( query );
         query['SELECT'].push( innerQuery );
-        table = new sObjectTable( query, [] );
+        results = [ new sObject( AccountTest.jsonWithOpportunities() ) ]
+        table = new sObjectTable( query, results );
     });
 
     describe(".createHeaders", function(){
@@ -35,6 +37,14 @@ describe("sObjectTable", function() {
         it("when inner queries to have a colSpan the same length as the fields in the query", function(){
             var headers = table.getHeaders();
             expect( innerQuery["SELECT"].length ).toEqual( headers[0][1].colSpan );
+        });
+    });
+
+    describe(".getRow", function(){
+        it("expect sObject row to be returned", function(){
+            var expectedSObj = results[0];
+            var row = table.getRow( 0 );
+            expect( row ).toEqual( true );
         });
     });
 });

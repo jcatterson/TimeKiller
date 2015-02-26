@@ -7,6 +7,13 @@
                 </th>
             </tr>
         </thead>
+        <tbody>
+            <tr ng-repeat="row in queryTable.rows">
+                <td ng-repeat="column in row">
+                    {{column}}
+                </td>
+            </tr>
+        </tbody>
     </table>
     <table id="sobject_table_results">
         <thead>

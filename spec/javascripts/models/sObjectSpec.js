@@ -6,32 +6,7 @@ describe("sObject", function() {
   var ACCOUNT_FIELD_VALUE = "CC978213";
 
   beforeEach(function(){
-    sObjectHash = {
-      "attributes":{
-        "type":"Account"
-      },
-      "Id":"001j000000G9Rq5AAF",
-      "Opportunities":[
-        {
-          "attributes":{
-            "type":"Opportunity"
-          },
-          "StageName":"Closed Won"
-        },
-        {
-          "attributes":{
-            "type":"Opportunity"
-          },
-          "StageName":"Open"
-        }
-      ],
-      "Owner":{
-        "attributes":{
-          "type": "Contact"
-        },
-        "Name": "Justin Catterson"
-      }
-    };
+    sObjectHash = AccountTest.jsonWithOpportunities();
     sObjectHash[ACCOUNT_FIELD] = ACCOUNT_FIELD_VALUE;
     sObj = new sObject(sObjectHash);
   });
