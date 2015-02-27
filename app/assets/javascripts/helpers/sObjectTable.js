@@ -102,7 +102,6 @@ function sObjectTable( queryString, sObjects ){
             html += '</tr>';
         }
         html = $(html);
-        window.x = html;
         return html;
     }
 
@@ -133,20 +132,6 @@ function sObjectTable( queryString, sObjects ){
             }
         }
         return dataCol;
-    }
-
-    this.getColumnsData = function( columnName ){
-        var data = [];
-        for( var i = 0; i < this.sObjects.length; i++ ){
-            var sObj = this.sObjects[i];
-            var ans = sObj.getFieldValue( columnName );
-            if( _.isArray( ans ) )
-                data.concat( ans );
-            else{
-                data.push( ans );
-            }
-        }
-        return data;
     }
 
     this.headers = this.getHeaders();
