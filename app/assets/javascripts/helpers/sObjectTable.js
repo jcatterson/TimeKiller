@@ -75,14 +75,45 @@ function sObjectTable( queryString, sObjects ){
     }
 
     this.getRow = function( index ){
+        var data = this.getRowData( index );
+        var maxLenCol = _.max( data, function(ary){
+            if( _.isArray( ary ) ){
+                return ary.length;
+            }
+            return 1;
+        } ).length;
+
+        var html = '';
+        for( var row = 0; row < maxLenCol; row++ ){
+            html += '<tr>';
+            for( var td = 0; td < data.length; td++ ){
+                var columnsData = data[td];
+                if( _.isArray( columnsData ) ){
+                    html += '<td>';
+                    html +=   columnsData[row];
+                    html += '</td>'
+                }
+                else if( row == 0 ){
+                    html += '<td rowspan="' + maxLenCol +'">';
+                    html +=   columnsData;
+                    html += '</td>';
+                }
+            }
+            html += '</tr>';
+        }
+        html = $(html);
+        window.x = html;
+        return html;
+    }
+
+    this.getRowData = function( index ){
         var rows = [];
         var sObj = this.sObjects[index];
         var dataCols = getSOQLDataCols( this.queryString );
-        var ans = [];
         for( var i = 0; i < dataCols.length; i++ ){
-            ans.push( sObj.getFieldValue( dataCols[i] ) );
+            rows.push( sObj.getFieldValue( dataCols[i] ) );
         }
-        return sObj;
+        return rows;
     }
 
     function getSOQLDataCols( mainQuery, tableName ){
