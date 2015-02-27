@@ -39,12 +39,4 @@ describe("sObjectTable", function() {
             expect( innerQuery["SELECT"].length ).toEqual( headers[0][1].colSpan );
         });
     });
-
-    describe(".getRow", function(){
-        it("expect sObject row to be returned", function(){
-            var expectedSObj = results[0];
-            var row = table.getRow( 0 );
-            expect( row ).toEqual( true );
-        });
-    });
 });

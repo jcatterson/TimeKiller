@@ -25,12 +25,8 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
     var the_query = $scope.codeWindow.getValue();
     var params = { "query":the_query };
     Query.query( params, function(res){
-      var queryString = readSOQL( the_query );
-      var columns = getColumns( queryString );
-      var sobjects = createSObjects( res, described_objects );
-      $scope.queryTable = new sObjectTable( queryString, sobjects);
-      $scope.theQuery = queryString;
-      $scope.sObjects = sobjects;
+      $scope.theQuery = readSOQL( the_query );
+      $scope.sObjects = createSObjects( res, described_objects );
     });
   }
 
