@@ -1,8 +1,3 @@
-/*table
-tr - rowspan
-td - colspan
-th - colspan
-*/
 function sObjectTable( queryString, sObjects ){
     this.cellValues;
     this.queryString = queryString;
@@ -82,12 +77,14 @@ function sObjectTable( queryString, sObjects ){
                 return ary.length;
             }
             return 1;
-        } ).length;
+        } );
+        if( _.isArray( maxLenCol ) )
+            maxLenCol = maxLenCol.length;
+        else
+            maxLenCol = 1;
 
         var htmlRows = [];
-        var html = '';
         for( var row = 0; row < maxLenCol; row++ ){
-
             var htmlRow = {
                 col : []
             }
@@ -99,23 +96,15 @@ function sObjectTable( queryString, sObjects ){
                         html: columnsData[row],
                         rowSpan: 1
                     } );
-                    html += '<td>';
-                    html +=   columnsData[row];
-                    html += '</td>'
                 }
                 else if( row == 0 ){
                     htmlRow.col.push( {
                         html: columnsData,
                         rowSpan: maxLenCol
                     } );
-                    html += '<td rowspan="' + maxLenCol +'">';
-                    html +=   columnsData;
-                    html += '</td>';
                 }
             }
-            html += '</tr>';
         }
-        html = $(html);
         return htmlRows;
     }
 
