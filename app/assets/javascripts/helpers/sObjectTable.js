@@ -87,10 +87,11 @@ function sObjectTable( queryString, sObjects ){
         var htmlRows = [];
         var html = '';
         for( var row = 0; row < maxLenCol; row++ ){
-            htmlRows.push( row );
+
             var htmlRow = {
                 col : []
             }
+            htmlRows.push( htmlRow );
             for( var td = 0; td < data.length; td++ ){
                 var columnsData = data[td];
                 if( _.isArray( columnsData ) ){
@@ -115,7 +116,7 @@ function sObjectTable( queryString, sObjects ){
             html += '</tr>';
         }
         html = $(html);
-        return html;
+        return htmlRows;
     }
 
     this.getRowData = function( index ){
@@ -146,6 +147,4 @@ function sObjectTable( queryString, sObjects ){
         }
         return dataCol;
     }
-
-    this.headers = this.getHeaders();
 }
