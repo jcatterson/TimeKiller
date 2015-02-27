@@ -18,8 +18,9 @@ function sObjectTable( queryString, sObjects ){
             }
             else{
                 var table = new sObjectTable( col, this.sObjects );
-                headerRow.push( {tableName: col["FROM"][0].table,
-                            headers: table.createHeaders()
+                headerRow.push( {
+                                  tableName: col["FROM"][0].table,
+                                  headers: table.createHeaders()
                             });
             }
         }
@@ -83,17 +84,29 @@ function sObjectTable( queryString, sObjects ){
             return 1;
         } ).length;
 
+        var htmlRows = [];
         var html = '';
         for( var row = 0; row < maxLenCol; row++ ){
-            html += '<tr>';
+            htmlRows.push( row );
+            var htmlRow = {
+                col : []
+            }
             for( var td = 0; td < data.length; td++ ){
                 var columnsData = data[td];
                 if( _.isArray( columnsData ) ){
+                    htmlRow.col.push( {
+                        html: columnsData[row],
+                        rowSpan: 1
+                    } );
                     html += '<td>';
                     html +=   columnsData[row];
                     html += '</td>'
                 }
                 else if( row == 0 ){
+                    htmlRow.col.push( {
+                        html: columnsData,
+                        rowSpan: maxLenCol
+                    } );
                     html += '<td rowspan="' + maxLenCol +'">';
                     html +=   columnsData;
                     html += '</td>';

@@ -13,6 +13,48 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   var original_sobject_list;
   var described_objects = {}
 
+
+  this.sample = function(){
+    var innerQuery = 'Select Id,StageName from Opportunities';
+    innerQuery = simpleSqlParser.sql2ast( innerQuery.toUpperCase() );
+    var query = "Select Id FROM Account".toUpperCase();
+    query = simpleSqlParser.sql2ast( query );
+    query['SELECT'].push( innerQuery );
+    console.log( "what is the query?" );
+    $scope.theQuery = query;
+    $scope.sObjects = [ new sObject( 
+       {
+              "attributes":{
+                "type":"Account"
+              },
+              "Id":"001j000000G9Rq5AAF",
+              "Opportunities":[
+                {
+                  "attributes":{
+                    "type":"Opportunity"
+                  },
+                  "StageName":"Closed Won",
+                  "Id":"006V0000005Gm8a"
+                },
+                {
+                  "attributes":{
+                    "type":"Opportunity"
+                  },
+                  "StageName":"Open",
+                  "Id":"006V0000005Gm8b"
+                }
+              ],
+              "Owner":{
+                "attributes":{
+                  "type": "Contact"
+                },
+                "Name": "Justin Catterson"
+              }
+            }
+    ) ];
+  }
+  this.sample();
+
   $scope.sobjects = Salesforce.query( function(result){
     original_sobject_list = _.clone( result );
   });
@@ -100,8 +142,13 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
 })
 .directive('sobjectResults', function(){
   return{
+    restrict: 'E',
+    scope: {
+      queryInfo: '=query',
+      sObjects: '=sobjects'
+    },
     templateUrl: '/templates/salesforce/sobject_results.html'
-  }
+  };
 })
 .directive('uiCodeMirror', [
   function(){
