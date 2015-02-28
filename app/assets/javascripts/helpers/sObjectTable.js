@@ -2,39 +2,7 @@ function sObjectTable( queryString, sObjects ){
     this.queryString = queryString;
     this.sObjects = _.clone( sObjects );
 
-    /*
-    {
-      headers: [
-          "column",
-          "columnB",
-          {
-            tableName: "TableB",
-            headers: [
-              ..
-            ]
-          },
-          "columnC",
-          ...
-      ]
-    }*/
-    this.createHeaders = function(){
-        var headerRow = [];
-        var cols = this.queryString['SELECT'];
-        for( var j = 0; j < cols.length; j++ ){
-            var col = cols[j];
-            if( col.name ){
-                headerRow.push( col.name );
-            }
-            else{
-                var table = new sObjectTable( col, this.sObjects );
-                headerRow.push( {
-                                  tableName: col["FROM"][0].table,
-                                  headers: table.createHeaders()
-                            });
-            }
-        }
-        return headerRow;
-    }
+
 
     /*[
         {
@@ -167,7 +135,7 @@ function sObjectTable( queryString, sObjects ){
     this.getRowData = function( index ){
         var rows = [];
         var sObj = this.sObjects[index];
-        var dataCols = getSOQLDataCols( this.queryString );
+        var dataCols = this.queryString.dataColumns();
         for( var i = 0; i < dataCols.length; i++ ){
             rows.push( sObj.getFieldValue( dataCols[i] ) );
         }
@@ -175,25 +143,36 @@ function sObjectTable( queryString, sObjects ){
     }
 
     /*
-    * Returns the FieldReference name of all the columns based on the
-    * mainQuery and the tableName
-    */
-    function getSOQLDataCols( mainQuery, tableName ){
-        var cols = mainQuery["SELECT"];
-        var dataCol = [];
-        for( var i = 0; i < cols.length; i++ ){
-            var col = cols[i];
+    {
+      headers: [
+          "column",
+          "columnB",
+          {
+            tableName: "TableB",
+            headers: [
+              ..
+            ]
+          },
+          "columnC",
+          ...
+      ]
+    }*/
+    this.createHeaders = function(){
+        var headerRow = [];
+        var cols = this.queryString.columns();
+        for( var j = 0; j < cols.length; j++ ){
+            var col = cols[j];
             if( col.name ){
-                if( tableName )
-                    dataCol.push( tableName + '.' + col.name );
-                else
-                    dataCol.push( col.name );
+                headerRow.push( col.name );
             }
             else{
-                var myCols = getSOQLDataCols( col, col["FROM"][0].table );
-                dataCol = dataCol.concat( myCols );
+                var table = new sObjectTable( col, this.sObjects );
+                headerRow.push( {
+                                  tableName: col.tableName(),
+                                  headers: table.createHeaders()
+                            });
             }
         }
-        return dataCol;
+        return headerRow;
     }
 }

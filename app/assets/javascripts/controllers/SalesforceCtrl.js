@@ -10,12 +10,6 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   var Salesforce = $resource( '/salesforce/sobject_list', {}, {query: query} );
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
   var Query = $resource( '/salesforce/query', {}, {query: query} );
-  var original_sobject_list;
-  var described_objects = {}
-
-  $scope.sobjects = Salesforce.query( function(result){
-    original_sobject_list = _.clone( result );
-  });
 
   $scope.sobjects_like = function(){
     $scope.sobjects = _(original_sobject_list).filter( sobject_is_like_search_term ).value();
@@ -23,46 +17,11 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
 
   $scope.query = function(){
     var the_query = $scope.codeWindow.getValue();
-    var params = { "query":the_query };
+    var params = { "query" : the_query };
     Query.query( params, function(res){
-      $scope.theQuery = readSOQL( the_query );
+      $scope.theQuery = new SOQL( the_query );
       $scope.sObjects = createSObjects( res, described_objects );
     });
-  }
-
-  getColumns = function( queryString ){
-    var cols = [];
-    var soqlCols = queryString["SELECT"];
-    for( var i = 0; i < soqlCols.length; i++ ){
-      var currentCol = soqlCols[i];
-      var innerQuery = currentCol["SELECT"];
-      if( currentCol.name ){
-        cols.push( currentCol.name );
-      }
-      else if( innerQuery ){
-        var tableName = currentCol["FROM"][0].table;
-        for( var j = 0; j < innerQuery.length; j++ ){
-          col = tableName + "." + innerQuery[j].name;
-          cols.push( col );
-        }
-      }
-    }
-    return cols;
-  }
-
-  readSOQL = function( theQuery ){
-    var queryString = theQuery.toUpperCase();
-    queryString = simpleSqlParser.sql2ast( queryString );
-    var columns = queryString["SELECT"];
-    for( var i = 0; i < columns.length; i++ ){
-      var col = columns[i].name;
-      if( col.indexOf("(") == 0 && col.lastIndexOf(")") == col.length - 1){
-        var innerQuery = col.substring(1, col.length-1);
-        var soql = simpleSqlParser.sql2ast( innerQuery );
-        columns[i] = soql;
-      }
-    }
-    return queryString;
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
@@ -90,6 +49,12 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
   sobject_is_like_search_term = function( sobject ){
     return sobject.toUpperCase().indexOf( $scope.sobject_search.toUpperCase() ) >= 0;
   }
+
+  var original_sobject_list;
+  var described_objects = {}
+  $scope.sobjects = Salesforce.query( function(result){
+    original_sobject_list = _.clone( result );
+  });
 }])
 .directive('sobjectList', function(){
   return{

@@ -84,8 +84,8 @@ describe("SalesforceCtrl", function() {
       var actualsObjects = scope.sObjects;
       var expectedsObjects = createSObjects( queryResults, {} );
       expect( expectedsObjects.length ).toEqual( actualsObjects.length );
-      expect( entireQuery["SELECT"][0] ).toEqual( scope.theQuery["SELECT"][0] );
-      expect( subQuery ).toEqual( scope.theQuery["SELECT"][1] );
+      expect( entireQuery["SELECT"][0] ).toEqual( scope.theQuery.columns()[0] );
+      expect( subQuery ).toEqual( scope.theQuery.columns()[1].query );
     });
   });
 });

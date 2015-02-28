@@ -1,20 +1,17 @@
 describe("sObjectTable", function() {
-    var table, query, innerQuery;
+    var table, query;
     var results;
     beforeEach(function(){
-        innerQuery = 'Select Id,StageName from Opportunities';
-        innerQuery = simpleSqlParser.sql2ast( innerQuery.toUpperCase() );
-        query = "Select Id FROM Account".toUpperCase();
-        query = simpleSqlParser.sql2ast( query );
-        query['SELECT'].push( innerQuery );
-        results = [ new sObject( AccountTest.jsonWithOpportunities() ) ]
+        query = "Select Id, (Select Id, StageName from Opportunities) from Account";
+        query = new SOQL(query);
+        results = [ new sObject( AccountTest.jsonWithOpportunities() ) ];
         table = new sObjectTable( query, results );
     });
 
     describe(".createHeaders", function(){
         it("expect the number of columns to be the same as the main query", function(){
             var headersLength = table.createHeaders().length;
-            expect( query["SELECT"].length ).toEqual( headersLength );
+            expect( query.columns().length ).toEqual( headersLength );
             expect( 1 ).not.toBe( headersLength );
         });
 
@@ -36,7 +33,9 @@ describe("sObjectTable", function() {
         });
         it("when inner queries to have a colSpan the same length as the fields in the query", function(){
             var headers = table.getHeaders();
-            expect( innerQuery["SELECT"].length ).toEqual( headers[0][1].colSpan );
+            var innerQuery = query.columns()[1];
+            var fieldValue = [];
+            expect( innerQuery.columns().length ).toEqual( headers[0][1].colSpan );
         });
     });
 });
