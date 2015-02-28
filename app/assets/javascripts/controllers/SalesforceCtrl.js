@@ -58,7 +58,8 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
       var col = columns[i].name;
       if( col.indexOf("(") == 0 && col.lastIndexOf(")") == col.length - 1){
         var innerQuery = col.substring(1, col.length-1);
-        columns[i] = simpleSqlParser.sql2ast( innerQuery );
+        var soql = simpleSqlParser.sql2ast( innerQuery );
+        columns[i] = soql;
       }
     }
     return queryString;

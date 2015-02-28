@@ -19,7 +19,6 @@ app.controller("SObjectTableCtrl", ['$scope', "$resource", function($scope, $res
         if( $scope.sObjects ){
             $scope.displayResults();
         }
-
     });
 
     $scope.$watch( 'sObjects', function(){

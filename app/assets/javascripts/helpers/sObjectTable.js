@@ -1,8 +1,22 @@
 function sObjectTable( queryString, sObjects ){
-    this.cellValues;
     this.queryString = queryString;
     this.sObjects = _.clone( sObjects );
 
+    /*
+    {
+      headers: [
+          "column",
+          "columnB",
+          {
+            tableName: "TableB",
+            headers: [
+              ..
+            ]
+          },
+          "columnC",
+          ...
+      ]
+    }*/
     this.createHeaders = function(){
         var headerRow = [];
         var cols = this.queryString['SELECT'];
@@ -22,6 +36,23 @@ function sObjectTable( queryString, sObjects ){
         return headerRow;
     }
 
+    /*[
+        {
+            rowSpan: n,
+            colSpan: n,
+            name: 'str',
+            subHeaders: opt
+                      [  {
+                            tableName: "TableName"
+                            headers: [
+                                "column",
+                                "columnB"
+                            ]
+                         }
+                      ]
+        },
+        ...
+    ]*/
     this.getHeaders = function(){
         var headers = this.createHeaders();
         var actualHeaders = [];
@@ -33,7 +64,7 @@ function sObjectTable( queryString, sObjects ){
             var th = {
                 rowSpan: 1,
             }
-            if( _.isObject( header ) ){
+            if( header.tableName ){
                 th.name = header.tableName;
                 th.colSpan = header.headers.length;
                 th.subHeaders = header.headers;
@@ -46,10 +77,11 @@ function sObjectTable( queryString, sObjects ){
             }
             actualHeaders[0].push( th );
         }
-        if( actualHeaders[0].length != standardHeaders.length ){// We have duplicates
+
+        if( actualHeaders[0].length != standardHeaders.length ){// We have subHeaders
             for( var i = 0; i < standardHeaders.length; i++ ){
                 var header = standardHeaders[i];
-                header.rowSpan = 2;
+                header.rowSpan = 2;// Only expect subHeaders to go one layer deep
             }
         }
         if( innerHeaders.length ){
@@ -70,6 +102,26 @@ function sObjectTable( queryString, sObjects ){
         return actualHeaders;
     }
 
+    /*
+    [
+      {
+        col : [
+                {
+                  html : "innerHtmlB",
+                  rowSpan : n
+                }
+        ]
+      },
+      {
+        col : [
+                {
+                  html : "innerHtmlB",
+                  rowSpan : n
+                }
+        ]
+      }
+    ]
+    */
     this.getRow = function( index ){
         var data = this.getRowData( index );
         var maxLenCol = _.max( data, function(ary){
@@ -108,6 +160,10 @@ function sObjectTable( queryString, sObjects ){
         return htmlRows;
     }
 
+    /*
+    * returns the array for each column defined by the SOQLDataCols
+    * the answers for all columns sObj.getFieldValue
+    */
     this.getRowData = function( index ){
         var rows = [];
         var sObj = this.sObjects[index];
@@ -118,6 +174,10 @@ function sObjectTable( queryString, sObjects ){
         return rows;
     }
 
+    /*
+    * Returns the FieldReference name of all the columns based on the
+    * mainQuery and the tableName
+    */
     function getSOQLDataCols( mainQuery, tableName ){
         var cols = mainQuery["SELECT"];
         var dataCol = [];

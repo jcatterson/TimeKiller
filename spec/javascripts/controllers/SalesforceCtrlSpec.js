@@ -51,7 +51,7 @@ describe("SalesforceCtrl", function() {
   });
 
   describe(".query", function(){
-    var queryResults, innerQuery;
+    var queryResults, innerQuery, wholeQuery;
     beforeEach( inject( function($compile){
       var element = '<textarea ui-code-mirror="true"></textarea>';
       element = $compile(element)(scope);
@@ -68,20 +68,24 @@ describe("SalesforceCtrl", function() {
                         },
                         "Id":"001j000000G9Rq5AAG"
                       }];
-      var regExpression = new RegExp( "[salesforce/query?query=].*" );
+      var sfQueryEndpoint = new RegExp( "[salesforce/query?query=].*" );
 
-      httpBackend.expectGET(regExpression).respond( queryResults );
-      innerQuery = "Select Id from Opportunities".toUpperCase();
-      scope.codeWindow.setValue("Select Id, (" + innerQuery + ") from Account");
+      httpBackend.expectGET(sfQueryEndpoint).respond( queryResults );
+      innerQuery = "Select Id from Opportunities ";
+      wholeQuery = "Select Id, (" + innerQuery + ") from Account";
+      scope.codeWindow.setValue( wholeQuery );
       scope.query();
       httpBackend.flush();
     }));
 
     it("Displays the columns queried for", function(){
-      var columns = scope.query_results["queryString"];
-      expect( columns[0] ).toEqual("ID");
-      innerQuery = simpleSqlParser.sql2ast( innerQuery );
-      expect( columns[1] ).toEqual( innerQuery["FROM"][0].table + '.' + innerQuery["SELECT"][0].name );
+      var entireQuery = simpleSqlParser.sql2ast( wholeQuery.toUpperCase() );
+      var subQuery = simpleSqlParser.sql2ast( innerQuery.toUpperCase() );
+      var actualsObjects = scope.sObjects;
+      var expectedsObjects = createSObjects( queryResults, {} );
+      expect( expectedsObjects.length ).toEqual( actualsObjects.length );
+      expect( entireQuery["SELECT"][0] ).toEqual( scope.theQuery["SELECT"][0] );
+      expect( subQuery ).toEqual( scope.theQuery["SELECT"][1] );
     });
   });
 });
