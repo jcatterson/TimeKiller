@@ -20,8 +20,9 @@
 
 function soqlHelper( editor, options ){
     var Pos = CodeMirror.Pos;
-    window.x = editor;
     var WORD = /[\w$]+/, RANGE = 500;
+    this.editor = editor;
+    this.options = options;
 
     this.help = function(){
       var tables = [
@@ -34,118 +35,113 @@ function soqlHelper( editor, options ){
            columns : ["Id", "StageName", "Name"]
          }
       ];
-      var foundWord = findWord( editor, options );
 
-      var context = findContext( editor );
-      var tableNames = _.pluck(tables, "tableName");
+      var foundWord = this.findWord();
       var matchingTableNames = [];
-      if( foundWord.word ){
-        matchingTableNames = _.filter( tableNames, function( tableName ){
-          return tableName.toUpperCase().indexOf(foundWord.word.toUpperCase()) == 0;
-        });
+
+      if( this.editor.getValue() != "" )
+      {
+        var context = this.findContext();
+
+        if( context ){
+          if( context.keyword == "FROM" ){
+            var tableNames = _.pluck(tables, "tableName");
+            matchingTableNames = _.filter( tableNames, function( tableName ){
+              return tableName.toUpperCase().indexOf(foundWord.word.toUpperCase()) == 0;
+            });
+          }
+        }
+
       }
-      var result = { list: matchingTableNames };
+
+      result = { list: matchingTableNames };
       result =_.merge( result, foundWord );
       return result;
     }
 
-    function findEndOfWord( editor, options ){
-      var cur = editor.getCursor();
-      var line = editor.getLine( cur.line );
+    this.findEndOfWord = function(){
+      var cur = this.editor.getCursor();
+      var line = this.editor.getLine( cur.line );
       var index = cur.ch;
       while( index && line[index] && (line[index] != " " && line[index] != "\n") ) index++;
       return index--;
     }
 
-    function findWord( editor, options ){
+    this.findWord = function(){
       var word = options && options.word || WORD;
-      var cur = editor.getCursor();
-      var curLine = editor.getLine(cur.line);
+      var cur = this.editor.getCursor();
+      var curLine = this.editor.getLine(cur.line);
       var end = cur.ch;
       var start = end;
       while (start && word.test(curLine.charAt(start - 1))) --start;
-      var curWord = start != end && curLine.slice(start, end);
-      var diff = end - findEndOfWord( editor, options );
+      var curWord = curLine.slice(start, end);
+      var diff = end - findEndOfWord();
 
       return { from: CodeMirror.Pos(cur.line, start ),
                to: CodeMirror.Pos(cur.line, end - diff),
                word: curWord
              };
-    }
-
-    function findContext( editor, options ){
-      var findNearestSelect = '';
-      var findNearestFrom = '';
-      searchFrom( editor );
-      searchSelect( editor );
-    }
-
-    /*
-    * Finds the nearest "from" clause to the right
-    */
-    function searchFrom( editor, startingPos ){
-      if( !startingPos ){
-          var cur = editor.getCursor();
-          var curLine = editor.getLine(cur.line);
-          var lineNum = cur.line;
-          var end = cur.ch;
-          startingPos = Pos(lineNum,end);
       }
 
-      editor.moveH(1, "group");
-      var word = findWord( editor );
-      if( word ){
-        if( word.word.toUpperCase() == "FROM" ){
-            var pos = Pos( editor.getCursor().line, editor.getCursor().ch );
-            editor.setCursor( startingPos );
-            return pos;
-        }
-        else{
-          var currentEditPos = editor.getCursor();
-          var lastChar = editor.getLine( editor.lineCount() - 1 );
-          lastChar = lastChar.length - 1;
-          if( currentEditPos.line >= editor.lineCount()-1 && currentEditPos.ch >= lastChar ){
-            editor.setCursor( startingPos );
-            return;
-          }
-          return searchFrom( editor, startingPos );
-        }
-      }
+    this.findContext = function(){
+      var keyword = this.searchPreviousKeyword();
+      return keyword;
     }
 
     /*
-    * Finds the nearest "select" clause to the left
+    * Finds the nearest keyword to the left
     */
-    function searchSelect( editor, startingPos ){
+    this.searchPreviousKeyword = function(startingPos){
+      var keywords = ['SELECT', 'FROM'];
+
       if( !startingPos ){
-          var cur = editor.getCursor();
-          x = 0;
-          var curLine = editor.getLine(cur.line);
+          var cur = this.editor.getCursor();
+          var curLine = this.editor.getLine(cur.line);
           var lineNum = cur.line;
           var end = cur.ch;
           startingPos = Pos(lineNum,end);
+          eatWhiteSpace( this.editor );
       }
 
-      editor.moveH(-1, "group");
-      var word = findWord( editor );
+      var word = this.findWord();
 
       if( word ){
-        if( word.word && word.word.toUpperCase() == "SELECT" ){
-            var pos = Pos( editor.getCursor().line, editor.getCursor().ch );
-            editor.setCursor( startingPos );
-            return pos;
+        if( word.word && _.includes( keywords, word.word.toUpperCase() ) ){
+            var keyword = word.word.toUpperCase();
+            var pos = Pos( this.editor.getCursor().line, this.editor.getCursor().ch );
+            this.editor.setCursor( startingPos );
+            return {
+              pos: pos,
+              keyword: keyword
+            }
         }
         else{
-          var currentEditPos = editor.getCursor();
-          var lastChar = editor.getLine( editor.lineCount() - 1 );
-          lastChar = lastChar.length - 1;
-          if( 0 <= editor.getCursor().line && 0 <= editor.getCursor().ch ){
-            editor.setCursor( startingPos );
+          var currentEditPos = this.editor.getCursor();
+          console.log( "how many times?" );
+          if( 0 == this.editor.getCursor().line && 0 == this.editor.getCursor().ch ){
+            this.editor.setCursor( startingPos );
+            console.log( "We read to the beginning");
             return;
           }
-          return searchSelect( editor, startingPos );
+
+          //this.editor.moveH(-1, "group");
+          //eatWhiteSpace( this.editor );
+          return this.searchPreviousKeyword( startingPos );
         }
       }
       return;
+    }
+
+    this.eatWhiteSpace = function(){
+      var cur = this.editor.getCursor();
+      var lineNum = cur.line;
+      var ch = cur.ch;
+      var line = this.editor.getLine( lineNum );
+      while( (line.length - 1) < ch || (line[ch] == " " && ch) ) {
+        ch--;
+      }
+      ch++;
+      var pos = CodeMirror.Pos( lineNum, ch );
+      this.editor.setCursor( pos );
     }
 }
