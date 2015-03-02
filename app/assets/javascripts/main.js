@@ -20,21 +20,11 @@ app.directive('sobjectResults', function(){
       restrict: "A",
       link: function( scope, element, attrs ){
         CodeMirror.commands.autocomplete = function(cm){
+          var tbls = JSON.parse( attrs.tables );
           cm.showHint({
                         hint: CodeMirror.hint.soql,
-                        options: {
-                          tables: [
-                            {
-                              tableName : "abc",
-                              columns : ["Test", "TEst"]
-                            },
-                            {
-                              tableName : "def",
-                              columns : ["1", "2", "3"]
-                            }
-                          ]
-                        }
-                });
+                        options: { tables : tbls }
+                     });
         }
 
         scope.codeWindow = CodeMirror.fromTextArea( element[0], {
