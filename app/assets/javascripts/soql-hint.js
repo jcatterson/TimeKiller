@@ -25,7 +25,7 @@ function soqlHelper( editor, options ){
     this.options = options;
 
     this.help = function(){
-      var tables = [
+      this.tables = [
          {
            tableName : "Account",
            columns : ["Id", "AccountNumber", "ShippingCity"]
@@ -37,7 +37,7 @@ function soqlHelper( editor, options ){
       ];
 
       var foundWord = this.findWord();
-      var matchingTableNames = [];
+      var matchingResults = [];
 
       if( this.editor.getValue() != "" )
       {
@@ -45,18 +45,40 @@ function soqlHelper( editor, options ){
 
         if( context ){
           if( context.keyword == "FROM" ){
-            var tableNames = _.pluck(tables, "tableName");
-            matchingTableNames = _.filter( tableNames, function( tableName ){
-              return tableName.toUpperCase().indexOf(foundWord.word.toUpperCase()) == 0;
-            });
+            matchingResults = this.findMatchingTables( foundWord );
+          }
+          else if( context.keyword == "SELECT" ){
+            matchingResults = this.findMatchingColumns( foundWord );
           }
         }
 
       }
 
-      result = { list: matchingTableNames };
+      result = { list: matchingResults };
       result =_.merge( result, foundWord );
       return result;
+    }
+
+    this.findMatchingColumns = function( foundWord ){
+      var key = this.searchNextKeyword();
+      this.editor.getCursor( key.pos );
+      this.editor.moveH(1, "word");
+      this.editor.moveH(1, "word");
+      var word = this.findWord();
+      var tableName = word.fullWord;
+      var tbl = _.find( this.tables, function(tbl){
+        return tbl.tableName.toUpperCase() == tableName.toUpperCase();
+      });
+      return tbl.columns;
+    }
+
+    this.findMatchingTables = function( foundWord ){
+      var tableNames = _.pluck(this.tables, "tableName");
+      var matchingTableNames = _.filter( tableNames, function( tableName ){
+        return tableName.toUpperCase().indexOf(foundWord.word.toUpperCase()) == 0;
+      });
+
+      return matchingTableNames;
     }
 
     this.findEndOfWord = function(){
@@ -133,6 +155,45 @@ function soqlHelper( editor, options ){
         }
         this.editor.moveH(-1, "word");
         this.editor.moveH(-1, "word");
+        this.editor.moveH(1, "char" );
+
+        return this.searchPreviousKeyword( startingPos );
+      }
+    }
+
+    this.searchNextKeyword = function(startingPos){
+      var keywords = ['SELECT', 'FROM'];
+
+      if( !startingPos ){
+          var cur = this.editor.getCursor();
+          var curLine = this.editor.getLine(cur.line);
+          var lineNum = cur.line;
+          var end = cur.ch;
+          startingPos = Pos(lineNum,end);
+          this.eatWhiteSpace( this.editor );
+      }
+
+      var word = this.findWord();
+
+      if( word && word.fullWord && _.includes( keywords, word.fullWord.toUpperCase() ) ){
+          var keyword = word.fullWord.toUpperCase();
+          var pos = Pos( this.editor.getCursor().line, this.editor.getCursor().ch );
+          this.editor.setCursor( startingPos );
+          return {
+            pos: pos,
+            keyword: keyword
+          }
+      }
+      else{
+        var currentEditPos = this.editor.getCursor();
+        var line = currentEditPos.line
+        var strLen = this.editor.getLine(line).length;
+        if( strLen <= this.editor.getCursor().ch ){//0 == this.editor.getCursor().line && 1 >= this.editor.getCursor().ch ){
+          this.editor.setCursor( startingPos );
+          return;
+        }
+        this.editor.moveH(1, "word");
+        this.editor.moveH(1, "word");
         this.editor.moveH(1, "char" );
 
         return this.searchPreviousKeyword( startingPos );

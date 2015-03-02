@@ -68,7 +68,7 @@ describe("soql-hint", function() {
     });
   });
 
-  /*describe(".help", function(){
+  describe(".help", function(){
       it("expect no results when empty",function(){
           var res = helper.help( cm );
           expect( res.list.length ).toEqual( 0 );
@@ -86,13 +86,10 @@ describe("soql-hint", function() {
           var firstPart = "test SELECT ID";
           var secondPart = " FROM OPPORTUNITY"
           var text = firstPart + secondPart;
-          console.log( text );
           cm.setValue( text );
           cm.setCursor( CodeMirror.Pos( 0, firstPart.length ) );
-          console.log( "our test");
           var res = helper.help( cm ).list;
-          console.log( "done");
           expect( res ).toEqual(["Id", "StageName", "Name"]);
       });
-  });*/
+  });
 });
