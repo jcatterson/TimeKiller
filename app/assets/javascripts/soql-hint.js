@@ -68,18 +68,29 @@ function soqlHelper( editor, options ){
     }
 
     this.findWord = function(){
-      var word = options && options.word || WORD;
+      var word = this.options && this.options.word || WORD;
       var cur = this.editor.getCursor();
       var curLine = this.editor.getLine(cur.line);
       var end = cur.ch;
       var start = end;
       while (start && word.test(curLine.charAt(start - 1))) --start;
       var curWord = curLine.slice(start, end);
-      var diff = end - findEndOfWord();
+      var diff = end - this.findEndOfWord();
+      var fullWord =
+      this.editor.getRange({
+                                            line: cur.line,
+                                            ch: start
+                                          },
+                                          {
+                                            line: cur.line,
+                                            ch: end - diff
+                                          }
+                                        );
 
       return { from: CodeMirror.Pos(cur.line, start ),
                to: CodeMirror.Pos(cur.line, end - diff),
-               word: curWord
+               word: curWord,
+               fullWord: fullWord
              };
       }
 
@@ -100,36 +111,32 @@ function soqlHelper( editor, options ){
           var lineNum = cur.line;
           var end = cur.ch;
           startingPos = Pos(lineNum,end);
-          eatWhiteSpace( this.editor );
+          this.eatWhiteSpace( this.editor );
       }
 
       var word = this.findWord();
 
-      if( word ){
-        if( word.word && _.includes( keywords, word.word.toUpperCase() ) ){
-            var keyword = word.word.toUpperCase();
-            var pos = Pos( this.editor.getCursor().line, this.editor.getCursor().ch );
-            this.editor.setCursor( startingPos );
-            return {
-              pos: pos,
-              keyword: keyword
-            }
-        }
-        else{
-          var currentEditPos = this.editor.getCursor();
-          console.log( "how many times?" );
-          if( 0 == this.editor.getCursor().line && 0 == this.editor.getCursor().ch ){
-            this.editor.setCursor( startingPos );
-            console.log( "We read to the beginning");
-            return;
+      if( word && word.fullWord && _.includes( keywords, word.fullWord.toUpperCase() ) ){
+          var keyword = word.fullWord.toUpperCase();
+          var pos = Pos( this.editor.getCursor().line, this.editor.getCursor().ch );
+          this.editor.setCursor( startingPos );
+          return {
+            pos: pos,
+            keyword: keyword
           }
-
-          //this.editor.moveH(-1, "group");
-          //eatWhiteSpace( this.editor );
-          return this.searchPreviousKeyword( startingPos );
-        }
       }
-      return;
+      else{
+        var currentEditPos = this.editor.getCursor();
+        if( 0 == this.editor.getCursor().line && 1 >= this.editor.getCursor().ch ){
+          this.editor.setCursor( startingPos );
+          return;
+        }
+        this.editor.moveH(-1, "word");
+        this.editor.moveH(-1, "word");
+        this.editor.moveH(1, "char" );
+
+        return this.searchPreviousKeyword( startingPos );
+      }
     }
 
     this.eatWhiteSpace = function(){
@@ -137,7 +144,7 @@ function soqlHelper( editor, options ){
       var lineNum = cur.line;
       var ch = cur.ch;
       var line = this.editor.getLine( lineNum );
-      while( (line.length - 1) < ch || (line[ch] == " " && ch) ) {
+      while( ch >= 0 && (line[ch] == " " || !line[ch] ) ){
         ch--;
       }
       ch++;

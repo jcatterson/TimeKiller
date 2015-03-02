@@ -23,6 +23,49 @@ describe("soql-hint", function() {
       helper.eatWhiteSpace();
       expect( cm.getCursor() ).toEqual( CodeMirror.Pos(0, text.length) );
     });
+
+    it("do nothing when empty string", function(){
+      cm.setValue("");
+      helper.eatWhiteSpace();
+      expect( 1 ).toEqual( 1 );
+    });
+  });
+
+  describe(".findWord",function(){
+    it("expect the characters seen to be shown", function(){
+      var partFound = "SELE";
+      var text = partFound + "CT";
+      cm.setValue(text);
+      cm.setCursor( CodeMirror.Pos(0, partFound.length) );
+      var actual = helper.findWord();
+      expect( actual.word ).toEqual( partFound );
+    });
+
+    it( "expect single characters to be shown", function(){
+      var text = "S";
+      cm.setValue(text);
+      cm.setCursor( CodeMirror.Pos(0, text.length) );
+      var actual = helper.findWord();
+      expect( actual.word ).toEqual( text );
+    });
+  });
+
+  describe( ".searchPreviousKeyword", function(){
+    it("find \"FROM\"", function(){
+      var text = "SELECT ID FROM ";
+      cm.setValue( text );
+      cm.setCursor( 0, text.length );
+      var keyword = helper.searchPreviousKeyword();
+      expect( keyword.keyword ).toEqual( "FROM" );
+    });
+
+    it("find \"SELECT\"", function(){
+      var text = "SELECT ID";
+      cm.setValue( text );
+      cm.setCursor( 0, text.length );
+      var keyword = helper.searchPreviousKeyword();
+      expect( keyword.keyword ).toEqual( "SELECT" );
+    });
   });
 
   /*describe(".help", function(){
