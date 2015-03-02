@@ -3,7 +3,19 @@ describe("soql-hint", function() {
 
   beforeEach(function(){
       cm = new CodeMirror();
-      helper = new soqlHelper( cm );
+      var options = {
+        tables : [
+             {
+               tableName : "Account",
+               columns : ["Id", "AccountNumber", "ShippingCity"]
+             },
+             {
+               tableName : "Opportunity",
+               columns : ["Id", "StageName", "Name"]
+             }
+          ]
+      };
+      helper = new soqlHelper( cm, options );
   });
 
   describe("eat whitespace", function(){
@@ -55,7 +67,7 @@ describe("soql-hint", function() {
       var text = "SELECT ID FROM ";
       cm.setValue( text );
       cm.setCursor( 0, text.length );
-      var keyword = helper.searchPreviousKeyword();
+      var keyword = helper.searchWord( -1 );
       expect( keyword.keyword ).toEqual( "FROM" );
     });
 
@@ -63,7 +75,7 @@ describe("soql-hint", function() {
       var text = "SELECT ID";
       cm.setValue( text );
       cm.setCursor( 0, text.length );
-      var keyword = helper.searchPreviousKeyword();
+      var keyword = helper.searchWord( -1 );
       expect( keyword.keyword ).toEqual( "SELECT" );
     });
   });

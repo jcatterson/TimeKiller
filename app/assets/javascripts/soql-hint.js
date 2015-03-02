@@ -23,18 +23,9 @@ function soqlHelper( editor, options ){
     var WORD = /[\w$]+/, RANGE = 500;
     this.editor = editor;
     this.options = options;
+    this.tables = options.tables;
 
     this.help = function(){
-      this.tables = [
-         {
-           tableName : "Account",
-           columns : ["Id", "AccountNumber", "ShippingCity"]
-         },
-         {
-           tableName : "Opportunity",
-           columns : ["Id", "StageName", "Name"]
-         }
-      ];
 
       var foundWord = this.findWord();
       var matchingResults = [];
@@ -60,11 +51,13 @@ function soqlHelper( editor, options ){
     }
 
     this.findMatchingColumns = function( foundWord ){
-      var key = this.searchNextKeyword();
+      var pos = this.editor.getCursor();
+      var key = this.searchWord( 1 );
       this.editor.getCursor( key.pos );
       this.editor.moveH(1, "word");
       this.editor.moveH(1, "word");
       var word = this.findWord();
+      this.editor.setCursor( pos );
       var tableName = word.fullWord;
       var tbl = _.find( this.tables, function(tbl){
         return tbl.tableName.toUpperCase() == tableName.toUpperCase();
@@ -117,14 +110,11 @@ function soqlHelper( editor, options ){
       }
 
     this.findContext = function(){
-      var keyword = this.searchPreviousKeyword();
+      var keyword = this.searchWord( -1 );
       return keyword;
     }
 
-    /*
-    * Finds the nearest keyword to the left
-    */
-    this.searchPreviousKeyword = function(startingPos){
+    this.searchWord = function( direction, startingPos ){
       var keywords = ['SELECT', 'FROM'];
 
       if( !startingPos ){
@@ -148,55 +138,27 @@ function soqlHelper( editor, options ){
           }
       }
       else{
-        var currentEditPos = this.editor.getCursor();
-        if( 0 == this.editor.getCursor().line && 1 >= this.editor.getCursor().ch ){
-          this.editor.setCursor( startingPos );
-          return;
-        }
-        this.editor.moveH(-1, "word");
-        this.editor.moveH(-1, "word");
-        this.editor.moveH(1, "char" );
 
-        return this.searchPreviousKeyword( startingPos );
+        if( this.shouldQuitSearching( direction ) )
+          return;
+
+        this.editor.moveH(direction, "word");
+        this.editor.moveH(direction, "word");
+        this.editor.moveH(1, "char" );
+        // Why do I go in the opposite direction.  This is incorrect
+        return this.searchWord( -direction, startingPos );
       }
     }
 
-    this.searchNextKeyword = function(startingPos){
-      var keywords = ['SELECT', 'FROM'];
-
-      if( !startingPos ){
-          var cur = this.editor.getCursor();
-          var curLine = this.editor.getLine(cur.line);
-          var lineNum = cur.line;
-          var end = cur.ch;
-          startingPos = Pos(lineNum,end);
-          this.eatWhiteSpace( this.editor );
-      }
-
-      var word = this.findWord();
-
-      if( word && word.fullWord && _.includes( keywords, word.fullWord.toUpperCase() ) ){
-          var keyword = word.fullWord.toUpperCase();
-          var pos = Pos( this.editor.getCursor().line, this.editor.getCursor().ch );
-          this.editor.setCursor( startingPos );
-          return {
-            pos: pos,
-            keyword: keyword
-          }
-      }
-      else{
+    this.shouldQuitSearching = function( direction ){
+      if( direction > 0 ){
         var currentEditPos = this.editor.getCursor();
         var line = currentEditPos.line
         var strLen = this.editor.getLine(line).length;
-        if( strLen <= this.editor.getCursor().ch ){//0 == this.editor.getCursor().line && 1 >= this.editor.getCursor().ch ){
-          this.editor.setCursor( startingPos );
-          return;
-        }
-        this.editor.moveH(1, "word");
-        this.editor.moveH(1, "word");
-        this.editor.moveH(1, "char" );
-
-        return this.searchPreviousKeyword( startingPos );
+        return strLen <= this.editor.getCursor().ch;
+      }
+      else{
+        return 0 == this.editor.getCursor().line && 1 >= this.editor.getCursor().ch;
       }
     }
 
