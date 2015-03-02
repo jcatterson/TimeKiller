@@ -23,7 +23,7 @@ app.directive('sobjectResults', function(){
           var tbls = JSON.parse( attrs.tables );
           cm.showHint({
                         hint: CodeMirror.hint.soql,
-                        options: { tables : tbls }
+                        options: { tables : scope.tables }
                      });
         }
 
