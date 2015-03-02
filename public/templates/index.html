@@ -5,15 +5,6 @@
     <div id="sidebar_footer"></div>
   </div>
 
-  <div id="main_view">
-    <span ng-repeat="field in described_sobject.sobject.fields">
-      <span>
-        {{field.name}}
-      </span>
-    </span>
-    <span ng-repeat-end/>
-  </div>
-
   <div>
     <textarea id="soql_query" data-ui-code-mirror="true" data-tables="{{tables}}"></textarea>
   </div>
