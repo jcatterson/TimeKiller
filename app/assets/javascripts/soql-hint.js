@@ -125,7 +125,6 @@ function soqlHelper( editor, options ){
           startingPos = Pos(lineNum,end);
           this.eatWhiteSpace( this.editor );
       }
-
       var word = this.findWord();
 
       if( word && word.fullWord && _.includes( keywords, word.fullWord.toUpperCase() ) ){
@@ -143,10 +142,21 @@ function soqlHelper( editor, options ){
           return;
 
         this.editor.moveH(direction, "word");
+
+        word = this.findWord();
+        if( word && word.fullWord && _.includes( keywords, word.fullWord.toUpperCase() ) ){
+            var keyword = word.fullWord.toUpperCase();
+            var pos = Pos( this.editor.getCursor().line, this.editor.getCursor().ch );
+            this.editor.setCursor( startingPos );
+            return {
+              pos: pos,
+              keyword: keyword
+            }
+        }
         this.editor.moveH(direction, "word");
-        this.editor.moveH(1, "char" );
-        // Why do I go in the opposite direction.  This is incorrect
-        return this.searchWord( -direction, startingPos );
+
+        this.editor.moveH( 1, "char" );
+        return this.searchWord( direction, startingPos );
       }
     }
 
