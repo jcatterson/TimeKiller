@@ -137,25 +137,19 @@ function soqlHelper( editor, options ){
           }
       }
       else{
-
         if( this.shouldQuitSearching( direction ) )
           return;
 
+        var oldWord = this.findWord();
         this.editor.moveH(direction, "word");
 
-        word = this.findWord();
-        if( word && word.fullWord && _.includes( keywords, word.fullWord.toUpperCase() ) ){
-            var keyword = word.fullWord.toUpperCase();
-            var pos = Pos( this.editor.getCursor().line, this.editor.getCursor().ch );
-            this.editor.setCursor( startingPos );
-            return {
-              pos: pos,
-              keyword: keyword
-            }
+        if( oldWord.fullWord == this.findWord().fullWord ){
+          this.editor.moveH(direction, "word");
         }
-        this.editor.moveH(direction, "word");
 
-        this.editor.moveH( 1, "char" );
+        if( this.editor.getCursor().ch == 0 ){
+          this.editor.moveH( 1, "char" );
+        }
         return this.searchWord( direction, startingPos );
       }
     }
