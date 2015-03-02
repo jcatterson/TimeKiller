@@ -12,7 +12,7 @@
   "use strict";
 
   CodeMirror.registerHelper("hint", "soql", function(editor, options) {
-    var helper = new soqlHelper( editor, options );
+    var helper = new soqlHelper( editor, options.options );
     return helper.help();
   });
 

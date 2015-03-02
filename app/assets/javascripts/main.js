@@ -23,13 +23,18 @@ app.directive('sobjectResults', function(){
           cm.showHint({
                         hint: CodeMirror.hint.soql,
                         options: {
-                          tables: {
-                            "abc":["Test", "TEst"],
-                            "def":["1", "2", "3"]
-                          },
-                          defaultTable: "abc"
+                          tables: [
+                            {
+                              tableName : "abc",
+                              columns : ["Test", "TEst"]
+                            },
+                            {
+                              tableName : "def",
+                              columns : ["1", "2", "3"]
+                            }
+                          ]
                         }
-                    });
+                });
         }
 
         scope.codeWindow = CodeMirror.fromTextArea( element[0], {
