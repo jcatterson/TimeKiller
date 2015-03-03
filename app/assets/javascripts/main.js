@@ -14,8 +14,7 @@ app.directive('sobjectResults', function(){
     templateUrl: '/templates/salesforce/sobject_results.html'
   };
 })
-.directive('uiCodeMirror', [
-  function(){
+.directive('uiCodeMirror', ["sObjectDescribe", function(sObjectDescribeFactory){
     return {
       restrict: "A",
       link: function( scope, element, attrs ){
@@ -35,4 +34,24 @@ app.directive('sobjectResults', function(){
       }
     }
   }
-]);
+])
+.factory("sObjectDescribe", ["$resource", function sObjectDescribe($resource){
+  var sObjects = {}
+
+  this.listsObjects = function( yield ){
+    var query = { method: 'GET',
+                  headers:{ 'Accept':'application/json' },
+                  isArray: true
+                };
+    var Salesforce = $resource( '/salesforce/sobject_list', {}, {query: query} );
+    return Salesforce.query( function(result){
+      yield( result );
+    });
+  }
+
+  this.describe = function(sObject){
+    console.log("no no");
+  }
+
+  return this;
+}]);

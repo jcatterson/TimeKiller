@@ -1,4 +1,4 @@
-app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resource){
+app.controller("SalesforceCtrl", ['$scope', "$resource", "sObjectDescribe", function($scope, $resource, sObjectDescribe){
   var query = { method: 'GET',
                 headers:{ 'Accept':'application/json' },
                 isArray: true
@@ -7,7 +7,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
                    headers:{ 'Accept':'application/json' },
                    isArray: false
               };
-  var Salesforce = $resource( '/salesforce/sobject_list', {}, {query: query} );
+
   var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
   var Query = $resource( '/salesforce/query', {}, {query: query} );
 
@@ -61,7 +61,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", function($scope, $resou
 
   var original_sobject_list;
   var described_objects = {}
-  $scope.sobjects = Salesforce.query( function(result){
+  $scope.sobjects = sObjectDescribe.listsObjects( function(result){
     original_sobject_list = _.clone( result );
     $scope.tables = [];
     for( var i = 0; i < original_sobject_list.length; i++ ){
