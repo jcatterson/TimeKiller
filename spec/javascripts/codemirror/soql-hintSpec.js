@@ -1,22 +1,25 @@
 describe("soql-hint", function() {
   var cm, helper;
+  beforeEach( module('app') );
 
-  beforeEach(function(){
+  beforeEach(inject(function(_jc_SFDC_){
       cm = new CodeMirror();
+      _jc_SFDC_.listsObjects = function(yield){
+        return ['Account', 'Opportunity'];
+      }
+      _jc_SFDC_.describe = function(sObject, yield){
+        return { fields : [
+                              { name : 'Id' },
+                              { name : 'StageName'},
+                              { name : 'Name'}
+                             ]
+                };
+      }
       var options = {
-        tables : [
-             {
-               tableName : "Account",
-               columns : ["Id", "AccountNumber", "ShippingCity"]
-             },
-             {
-               tableName : "Opportunity",
-               columns : ["Id", "StageName", "Name"]
-             }
-          ]
-      };
+        jc_SFDC : _jc_SFDC_
+      }
       helper = new soqlHelper( cm, options );
-  });
+  }));
 
   describe("eat whitespace", function(){
     it("eat white space", function(){
