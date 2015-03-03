@@ -18,11 +18,14 @@ app.directive('sobjectResults', function(){
     return {
       restrict: "A",
       link: function( scope, element, attrs ){
+        var tables = []
+        jc_SFDC.listsObjects( function(res){
+          tables = res;
+        });
         CodeMirror.commands.autocomplete = function(cm){
-          var tbls = JSON.parse( attrs.tables );
           cm.showHint({
                         hint: CodeMirror.hint.soql,
-                        options: { tables : scope.tables }
+                        options: { tables : tables, jc_SFDC : jc_SFDC }
                      });
         }
 
@@ -39,13 +42,18 @@ app.directive('sobjectResults', function(){
   var sObjects = {}
 
   this.listsObjects = function( yield ){
+    if( this.sObjectList ) return this.sObjectList;
+
     var query = { method: 'GET',
                   headers:{ 'Accept':'application/json' },
                   isArray: true
                 };
     var Salesforce = $resource( '/salesforce/sobject_list', {}, {query: query} );
+    var self = this;
     return Salesforce.query( function(result){
-      yield( result );
+      self.sObjectList = result;
+      if( yield )
+        yield( result );
     });
   }
 
@@ -61,8 +69,9 @@ app.directive('sobjectResults', function(){
     var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
     var myDescribe = this.alreadyDescribed;
     return Describe.query( {"sobject":sObjectToDescribe}, function(res){
-      myDescribe[sObjectToDescribe] = res;
-      yield(res);
+      myDescribe[sObjectToDescribe] = res.sobject;
+      if( yield )
+        yield(res);
     });
   }
 
@@ -73,12 +82,12 @@ app.directive('sobjectResults', function(){
                 };
     var Query = $resource( '/salesforce/query', {}, {query: query} );
     return Query.query( {"query" : queryString }, function(res){
-      yield(res);
+      if( yield )
+        yield(res);
     });
   }
 
   this.alreadyDescribed = {};
-  this.sObjectList = {};
 
   return this;
 }]);

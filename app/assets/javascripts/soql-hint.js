@@ -24,6 +24,12 @@ function soqlHelper( editor, options ){
     this.editor = editor;
     this.options = options;
     this.tables = options.tables;
+    this.jc_SFDC = options.jc_SFDC;
+
+    this.describeFields = function( table ){
+      var describe = this.jc_SFDC.describe( table, function(res){} );
+      return _.pluck( describe.fields, 'name' );
+    }
 
     this.help = function(){
 
@@ -59,15 +65,11 @@ function soqlHelper( editor, options ){
       var word = this.findWord();
       this.editor.setCursor( pos );
       var tableName = word.fullWord;
-      var tbl = _.find( this.tables, function(tbl){
-        return tbl.tableName.toUpperCase() == tableName.toUpperCase();
-      });
-      return tbl.columns;
+      return this.describeFields( tableName );
     }
 
     this.findMatchingTables = function( foundWord ){
-      var tableNames = _.pluck(this.tables, "tableName");
-      var matchingTableNames = _.filter( tableNames, function( tableName ){
+      var matchingTableNames = _.filter( this.tables, function( tableName ){
         return tableName.toUpperCase().indexOf(foundWord.word.toUpperCase()) == 0;
       });
 
