@@ -23,8 +23,9 @@ function soqlHelper( editor, options ){
     var WORD = /[\w$]+/, RANGE = 500;
     this.editor = editor;
     this.options = options;
-    this.tables = options.tables;
+
     this.jc_SFDC = options.jc_SFDC;
+    this.tables = this.jc_SFDC.listsObjects(function(res){});
 
     this.describeFields = function( table ){
       var describe = this.jc_SFDC.describe( table, function(res){} );

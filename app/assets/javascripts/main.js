@@ -18,14 +18,10 @@ app.directive('sobjectResults', function(){
     return {
       restrict: "A",
       link: function( scope, element, attrs ){
-        var tables = []
-        jc_SFDC.listsObjects( function(res){
-          tables = res;
-        });
         CodeMirror.commands.autocomplete = function(cm){
           cm.showHint({
                         hint: CodeMirror.hint.soql,
-                        options: { tables : tables, jc_SFDC : jc_SFDC }
+                        options: { jc_SFDC : jc_SFDC }
                      });
         }
 
@@ -39,7 +35,6 @@ app.directive('sobjectResults', function(){
   }
 ])
 .service("jc_SFDC", ["$resource", function jc_SFDC($resource){
-  var sObjects = {}
 
   this.listsObjects = function( yield ){
     if( this.sObjectList ) return this.sObjectList;
@@ -62,6 +57,7 @@ app.directive('sobjectResults', function(){
       yield( this.alreadyDescribed[sObjectToDescribe] );
       return this.alreadyDescribed[sObjectToDescribe];
     }
+    this.alreadyDescribed[sObjectToDescribe] = {};
     var describe = { method: 'GET',
                      headers:{ 'Accept':'application/json' },
                      isArray: false
