@@ -14,7 +14,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", "jc_SFDC", function($sc
 
   $scope.describe_sobject = function(sobject_to_describe){
     jc_SFDC.describe( sobject_to_describe, function(res){
-        $scope.described_sobject = res;
+        $scope.described_sobject = res.sobject;
         initializeSOQL();
     });
   }
