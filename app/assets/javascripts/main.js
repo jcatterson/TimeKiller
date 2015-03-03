@@ -50,12 +50,18 @@ app.directive('sobjectResults', function(){
   }
 
   this.describe = function(sObjectToDescribe, yield){
+    if( this.alreadyDescribed[sObjectToDescribe] ){
+      yield( this.alreadyDescribed[sObjectToDescribe] );
+      return this.alreadyDescribed[sObjectToDescribe];
+    }
     var describe = { method: 'GET',
                      headers:{ 'Accept':'application/json' },
                      isArray: false
                 };
     var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
+    var myDescribe = this.alreadyDescribed;
     return Describe.query( {"sobject":sObjectToDescribe}, function(res){
+      myDescribe[sObjectToDescribe] = res;
       yield(res);
     });
   }
@@ -70,6 +76,9 @@ app.directive('sobjectResults', function(){
       yield(res);
     });
   }
+
+  this.alreadyDescribed = {};
+  this.sObjectList = {};
 
   return this;
 }]);

@@ -13,9 +13,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", "jc_SFDC", function($sc
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
-    if( !described_objects[sobject_to_describe] ){
-      description = jc_SFDC.describe( sobject_to_describe, function(res){
-        described_objects[sobject_to_describe] = res;
+    jc_SFDC.describe( sobject_to_describe, function(res){
         $scope.described_sobject = res;
         var matchingTbl = _.find( $scope.tables, function( tbl ){
                             return tbl.tableName.toUpperCase() == sobject_to_describe.toUpperCase();
@@ -27,12 +25,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", "jc_SFDC", function($sc
         }
         matchingTbl.columns.sort();
         initializeSOQL();
-      });
-    }
-    else{
-      $scope.described_sobject = described_objects[sobject_to_describe];
-      initializeSOQL();
-    }
+    });
   }
 
   initializeSOQL = function(){
