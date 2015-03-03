@@ -1,32 +1,20 @@
-app.controller("SalesforceCtrl", ['$scope', "$resource", "sObjectDescribe", function($scope, $resource, sObjectDescribe){
-  var query = { method: 'GET',
-                headers:{ 'Accept':'application/json' },
-                isArray: true
-              };
-  var describe = { method: 'GET',
-                   headers:{ 'Accept':'application/json' },
-                   isArray: false
-              };
-
-  var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
-  var Query = $resource( '/salesforce/query', {}, {query: query} );
+app.controller("SalesforceCtrl", ['$scope', "$resource", "jc_SFDC", function($scope, $resource, jc_SFDC){
 
   $scope.sobjects_like = function(){
     $scope.sobjects = _(original_sobject_list).filter( sobject_is_like_search_term ).value();
   }
 
   $scope.query = function(){
-    var the_query = $scope.codeWindow.getValue();
-    var params = { "query" : the_query };
-    Query.query( params, function(res){
-      $scope.theQuery = new SOQL( the_query );
+    var usersQuery = $scope.codeWindow.getValue();
+    jc_SFDC.query( usersQuery, function(res){
+      $scope.theQuery = new SOQL( usersQuery );
       $scope.sObjects = createSObjects( res, described_objects );
     });
   }
 
   $scope.describe_sobject = function(sobject_to_describe){
     if( !described_objects[sobject_to_describe] ){
-      description = Describe.query({"sobject":sobject_to_describe}, function(res){
+      description = jc_SFDC.describe( sobject_to_describe, function(res){
         described_objects[sobject_to_describe] = res;
         $scope.described_sobject = res;
         var matchingTbl = _.find( $scope.tables, function( tbl ){
@@ -61,7 +49,7 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", "sObjectDescribe", func
 
   var original_sobject_list;
   var described_objects = {}
-  $scope.sobjects = sObjectDescribe.listsObjects( function(result){
+  $scope.sobjects = jc_SFDC.listsObjects( function(result){
     original_sobject_list = _.clone( result );
     $scope.tables = [];
     for( var i = 0; i < original_sobject_list.length; i++ ){

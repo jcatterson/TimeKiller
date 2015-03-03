@@ -14,7 +14,7 @@ app.directive('sobjectResults', function(){
     templateUrl: '/templates/salesforce/sobject_results.html'
   };
 })
-.directive('uiCodeMirror', ["sObjectDescribe", function(sObjectDescribeFactory){
+.directive('uiCodeMirror', ["jc_SFDC", function(jc_SFDC){
     return {
       restrict: "A",
       link: function( scope, element, attrs ){
@@ -35,7 +35,7 @@ app.directive('sobjectResults', function(){
     }
   }
 ])
-.factory("sObjectDescribe", ["$resource", function sObjectDescribe($resource){
+.factory("jc_SFDC", ["$resource", function jc_SFDC($resource){
   var sObjects = {}
 
   this.listsObjects = function( yield ){
@@ -49,8 +49,26 @@ app.directive('sobjectResults', function(){
     });
   }
 
-  this.describe = function(sObject){
-    console.log("no no");
+  this.describe = function(sObjectToDescribe, yield){
+    var describe = { method: 'GET',
+                     headers:{ 'Accept':'application/json' },
+                     isArray: false
+                };
+    var Describe = $resource( '/salesforce/describe', {}, {query: describe} );
+    return Describe.query( {"sobject":sObjectToDescribe}, function(res){
+      yield(res);
+    });
+  }
+
+  this.query = function(queryString, yield){
+    var query = { method: 'GET',
+                  headers:{ 'Accept':'application/json' },
+                  isArray: true
+                };
+    var Query = $resource( '/salesforce/query', {}, {query: query} );
+    return Query.query( {"query" : queryString }, function(res){
+      yield(res);
+    });
   }
 
   return this;
