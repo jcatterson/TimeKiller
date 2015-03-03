@@ -38,7 +38,7 @@ app.directive('sobjectResults', function(){
     }
   }
 ])
-.factory("jc_SFDC", ["$resource", function jc_SFDC($resource){
+.service("jc_SFDC", ["$resource", function jc_SFDC($resource){
   var sObjects = {}
 
   this.listsObjects = function( yield ){

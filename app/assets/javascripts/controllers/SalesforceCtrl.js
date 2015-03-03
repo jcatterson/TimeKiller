@@ -21,8 +21,8 @@ app.controller("SalesforceCtrl", ['$scope', "$resource", "jc_SFDC", function($sc
 
   initializeSOQL = function(){
     var describedObject = $scope.described_sobject;
-    var first_field = describedObject.sobject.fields[0];
-    $scope.codeWindow.setValue( "Select " + first_field.name + ", from " + describedObject.sobject.name );
+    var first_field = describedObject.fields[0];
+    $scope.codeWindow.setValue( "Select " + first_field.name + ", from " + describedObject.name );
     $scope.codeWindow.focus();
     $scope.codeWindow.doc.setCursor( {line:0, ch:"Select ".length + first_field.name.length + 1} );
   }
